@@ -20,7 +20,6 @@ Hub-Spoke / Peer-to-Peer トポロジ、複数の競合解決戦略、マルチD
 - [使用方法](#使用方法)
     - [Worker サービスの起動](#worker-サービスの起動)
     - [Web UI の起動](#web-ui-の起動)
-- [プロジェクト構成](#プロジェクト構成)
 - [ドキュメント](#ドキュメント)
 - [サードパーティライセンス](#サードパーティライセンス)
 - [セキュリティ](#セキュリティ)
@@ -106,36 +105,6 @@ dotnet run --project src/ReplicaSync.Web
 - 同期ログの確認
 
 詳細は [Wiki](docs/wiki/Home.md) を参照してください。
-
-## プロジェクト構成
-
-```text
-VehicleVision.Pleasanter.ReplicaSync/
-├── src/
-│   ├── ReplicaSync.Core/            # コアビジネスロジック
-│   │   ├── Enums/                   # 列挙型（DbmsType, SyncStatus 等）
-│   │   ├── Interfaces/              # インターフェース定義
-│   │   ├── Models/                  # データモデル
-│   │   └── Services/                # 同期エンジン、ルールエンジン
-│   ├── ReplicaSync.Infrastructure/  # データアクセス層
-│   │   ├── Data/                    # EF Core DbContext
-│   │   ├── Pleasanter/              # Pleasanter DB直接アクセス
-│   │   └── Repositories/            # 構成リポジトリ
-│   ├── ReplicaSync.Web/             # Blazor Server Web UI
-│   │   └── Components/Pages/        # ダッシュボード等の画面
-│   └── ReplicaSync.Worker/          # バックグラウンド同期サービス
-├── tests/
-│   └── ReplicaSync.Core.Tests/      # ユニットテスト
-├── docs/
-│   ├── contributing/                # 開発者向けガイドライン
-│   ├── script/                      # ドキュメント用スクリプト
-│   └── wiki/                        # Wikiドキュメント
-├── .github/                         # GitHub設定（CI/CD、セキュリティポリシー等）
-├── LICENSES/                        # サードパーティライセンス
-├── CONTRIBUTING.md
-├── LICENSE
-└── README.md
-```
 
 ## ドキュメント
 
