@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-ReplicaSync.Worker-ea525de6-1209-40d2-9be5-575363640638</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ReplicaSync.Core\ReplicaSync.Core.csproj" />
+    <ProjectReference Include="..\ReplicaSync.Infrastructure\ReplicaSync.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

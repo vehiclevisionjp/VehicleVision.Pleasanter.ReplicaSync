@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using ReplicaSync.Core.Enums;
 using ReplicaSync.Core.Interfaces;
@@ -13,7 +14,7 @@ public class SyncEngine : ISyncEngine
     private readonly IPleasanterDbAccess _dbAccess;
     private readonly ISyncConfigRepository _configRepository;
     private readonly ILogger<SyncEngine> _logger;
-    private readonly Dictionary<string, DateTime> _lastSyncTimes = new();
+    private readonly ConcurrentDictionary<string, DateTime> _lastSyncTimes = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SyncEngine"/> class.
@@ -56,11 +57,10 @@ public class SyncEngine : ISyncEngine
             var referenceType = await _dbAccess.GetReferenceTypeAsync(
                 source.ConnectionString, source.DbmsType, definition.SourceSiteId, cancellationToken).ConfigureAwait(false);
 
-            var lastSyncKey = $"{definition.SyncId}";
-            if (!_lastSyncTimes.TryGetValue(lastSyncKey, out var lastSyncTime))
-            {
-                lastSyncTime = DateTime.UtcNow.AddMinutes(-5);
-            }
+            var lastSyncKey = definition.SyncId;
+            var lastSyncTime = _lastSyncTimes.GetOrAdd(
+                lastSyncKey,
+                _ => DateTime.UtcNow.AddSeconds(-definition.PollingIntervalSeconds));
 
             // Get all columns we need (union of all target effective columns + sync keys)
             var allNeededColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -209,7 +209,7 @@ public class SyncEngine : ISyncEngine
                 }
             }
 
-            _lastSyncTimes[lastSyncKey] = DateTime.UtcNow;
+            _lastSyncTimes.AddOrUpdate(lastSyncKey, DateTime.UtcNow, (_, _) => DateTime.UtcNow);
         }
         catch (Exception ex)
         {
