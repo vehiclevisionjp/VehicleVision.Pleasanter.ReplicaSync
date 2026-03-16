@@ -40,8 +40,10 @@ public static class ServiceCollectionExtensions
                     options.UseNpgsql(connectionString);
                     break;
                 case DbmsType.MySql:
-                    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-                    break;
+                    throw new NotSupportedException(
+                        "MySQL is not yet supported as a configuration database provider with .NET 10. " +
+                        "Use SQL Server or PostgreSQL for the configuration database. " +
+                        "MySQL is fully supported for Pleasanter data access.");
                 default:
                     throw new ArgumentOutOfRangeException(nameof(configDbType), configDbType, "Unsupported DBMS type.");
             }
