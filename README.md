@@ -1,4 +1,4 @@
-# {{PROJECT_NAME}}
+# VehicleVision.Pleasanter.ReplicaSync
 
 <!-- markdownlint-disable MD013 -->
 
@@ -6,22 +6,39 @@
 
 <!-- markdownlint-enable MD013 -->
 
-{{PROJECT_DESCRIPTION}}
+複数の Pleasanter インスタンス間でデータを同期するためのレプリカ同期プラットフォームです。
+Hub-Spoke / Peer-to-Peer トポロジ、複数の競合解決戦略、マルチDBMS（SQL Server / PostgreSQL / MySQL）をサポートします。
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+- [主な機能](#主な機能)
 - [セットアップ](#セットアップ)
     - [前提条件](#前提条件)
     - [クローン](#クローン)
     - [ビルド](#ビルド)
 - [使用方法](#使用方法)
+    - [Worker サービスの起動](#worker-サービスの起動)
+    - [Web UI の起動](#web-ui-の起動)
 - [プロジェクト構成](#プロジェクト構成)
+- [ドキュメント](#ドキュメント)
 - [サードパーティライセンス](#サードパーティライセンス)
 - [セキュリティ](#セキュリティ)
 - [謝辞](#謝辞)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 主な機能
+
+- **マルチトポロジ対応** - Hub-Spoke（親子）および Peer-to-Peer トポロジをサポート
+- **競合解決戦略** - SourceWins / LastWriteWins / ManualResolution の3つの戦略から選択
+- **カラムレベル制御** - 同期対象カラムの Include / Exclude フィルタリング
+- **マルチDBMS** - SQL Server、PostgreSQL、MySQL の Pleasanter インスタンスに対応
+- **同期キー** - 任意のカラムをキーとしたレコードマッチング
+- **削除同期** - ソフトデリート追跡による削除レコードの同期
+- **監査ログ** - すべての同期操作を詳細に記録
+- **Web UI** - Blazor Server ベースの管理画面でインスタンス・定義・ログを管理
+- **バックグラウンドサービス** - .NET Worker Service による継続的なポーリング同期
 
 ## セットアップ
 
@@ -34,8 +51,8 @@
 ### クローン
 
 ```bash
-git clone https://github.com/vehiclevisionjp/{{PROJECT_NAME}}.git
-cd {{PROJECT_NAME}}
+git clone https://github.com/vehiclevisionjp/VehicleVision.Pleasanter.ReplicaSync.git
+cd VehicleVision.Pleasanter.ReplicaSync
 ```
 
 ### ビルド
@@ -53,47 +70,96 @@ npm install
 
 ## 使用方法
 
-<!-- TODO: プロジェクトに合わせて記述 -->
+### Worker サービスの起動
+
+バックグラウンドで同期処理を実行する Worker サービスを起動します。
+
+```bash
+dotnet run --project src/ReplicaSync.Worker
+```
+
+`appsettings.json` で構成データベースの接続先を設定できます。
+
+```json
+{
+    "ConnectionStrings": {
+        "ConfigDatabase": "<構成データベースの接続文字列>"
+    },
+    "ConfigDatabaseType": "SqlServer"
+}
+```
+
+`ConfigDatabaseType` には `SqlServer`、`PostgreSql` を指定できます。
+
+### Web UI の起動
+
+同期インスタンス・定義・ログを管理するための Web UI を起動します。
+
+```bash
+dotnet run --project src/ReplicaSync.Web
+```
+
+ブラウザで表示されるダッシュボードから、以下の操作が可能です：
+
+- 同期インスタンスの登録・編集・削除
+- 同期定義の作成・有効化・無効化
+- 同期ログの確認
+
+詳細は [Wiki](docs/wiki/Home.md) を参照してください。
 
 ## プロジェクト構成
 
 ```text
-{{PROJECT_NAME}}/
-├── .github/                    # GitHub設定（CI/CD、セキュリティポリシー等）
-│   ├── copilot-instructions.md
-│   ├── SECURITY.md
-│   └── workflows/
-│       └── sync-wiki.yml
-├── .vscode/                    # VS Code設定
-│   ├── extensions.json
-│   ├── settings.json
-│   └── tasks.json
-├── docs/                       # ドキュメント
-│   ├── contributing/           # 開発者向けガイドライン
-│   ├── script/                 # ドキュメント用スクリプト
-│   └── wiki/                   # Wikiドキュメント
-├── LICENSES/                   # サードパーティライセンス
-├── .editorconfig
-├── .gitignore
-├── .markdownlint-cli2.jsonc
-├── .prettierignore
-├── .prettierrc
-├── AUTHORS
+VehicleVision.Pleasanter.ReplicaSync/
+├── src/
+│   ├── ReplicaSync.Core/            # コアビジネスロジック
+│   │   ├── Enums/                   # 列挙型（DbmsType, SyncStatus 等）
+│   │   ├── Interfaces/              # インターフェース定義
+│   │   ├── Models/                  # データモデル
+│   │   └── Services/                # 同期エンジン、ルールエンジン
+│   ├── ReplicaSync.Infrastructure/  # データアクセス層
+│   │   ├── Data/                    # EF Core DbContext
+│   │   ├── Pleasanter/              # Pleasanter DB直接アクセス
+│   │   └── Repositories/            # 構成リポジトリ
+│   ├── ReplicaSync.Web/             # Blazor Server Web UI
+│   │   └── Components/Pages/        # ダッシュボード等の画面
+│   └── ReplicaSync.Worker/          # バックグラウンド同期サービス
+├── tests/
+│   └── ReplicaSync.Core.Tests/      # ユニットテスト
+├── docs/
+│   ├── contributing/                # 開発者向けガイドライン
+│   ├── script/                      # ドキュメント用スクリプト
+│   └── wiki/                        # Wikiドキュメント
+├── .github/                         # GitHub設定（CI/CD、セキュリティポリシー等）
+├── LICENSES/                        # サードパーティライセンス
 ├── CONTRIBUTING.md
 ├── LICENSE
-├── README.md
-└── package.json
+└── README.md
 ```
+
+## ドキュメント
+
+- [Wiki](docs/wiki/Home.md) - 機能説明、アーキテクチャ、設定ガイド
+- [コントリビューションガイド](CONTRIBUTING.md) - 開発参加方法
 
 ## サードパーティライセンス
 
 このプロジェクトは以下のサードパーティライブラリを使用しています：
 
-<!-- TODO: 使用するライブラリに合わせて更新 -->
+<!-- markdownlint-disable MD013 -->
 
-| ライブラリ | ライセンス | 著作権 |
-| ---------- | ---------- | ------ |
-|            |            |        |
+| ライブラリ                              | ライセンス | 用途                            |
+| --------------------------------------- | ---------- | ------------------------------- |
+| Microsoft.EntityFrameworkCore           | MIT        | ORM / 構成データベースアクセス  |
+| Microsoft.EntityFrameworkCore.SqlServer | MIT        | SQL Server プロバイダー         |
+| Microsoft.Extensions.Hosting            | MIT        | Worker サービスホスティング     |
+| Microsoft.Extensions.Logging            | MIT        | ログ抽象化                      |
+| Microsoft.Data.SqlClient                | MIT        | SQL Server ADO.NET ドライバー   |
+| Npgsql                                  | PostgreSQL | PostgreSQL ADO.NET ドライバー   |
+| Npgsql.EntityFrameworkCore.PostgreSQL   | PostgreSQL | PostgreSQL EF Core プロバイダー |
+| MySqlConnector                          | MIT        | MySQL ADO.NET ドライバー        |
+
+<!-- markdownlint-enable MD013 -->
 
 ライセンスファイルの全文は [LICENSES](./LICENSES/) フォルダを参照してください。
 

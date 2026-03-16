@@ -1,6 +1,6 @@
 # テストガイドライン
 
-このドキュメントでは、{{PROJECT_NAME}} プロジェクトのテスト規約について説明します。
+このドキュメントでは、VehicleVision.Pleasanter.ReplicaSync プロジェクトのテスト規約について説明します。
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -27,19 +27,21 @@
 
 | 項目                     | 内容                     |
 | ------------------------ | ------------------------ |
-| プロジェクト名           | `{{PROJECT_NAME}}.Tests` |
+| プロジェクト名           | `ReplicaSync.Core.Tests` |
 | テストフレームワーク     | xUnit                    |
 | ターゲットフレームワーク | .NET 10                  |
 | カバレッジツール         | coverlet.collector       |
 
 ### ディレクトリ構造
 
-<!-- TODO: プロジェクトに合わせて更新 -->
-
 ```text
-{{PROJECT_NAME}}.Tests/
-├── {{PROJECT_NAME}}.Tests.csproj
-└── (テストファイル)
+ReplicaSync.Core.Tests/
+├── ReplicaSync.Core.Tests.csproj
+├── Models/
+│   ├── PleasanterRecordTests.cs
+│   └── SyncDefinitionTests.cs
+└── Services/
+    └── SyncRuleEngineTests.cs
 ```
 
 ---

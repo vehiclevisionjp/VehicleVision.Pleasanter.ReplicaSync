@@ -1,6 +1,6 @@
 # コントリビューションガイド
 
-{{PROJECT_NAME}} へのコントリビューションに感謝します。
+VehicleVision.Pleasanter.ReplicaSync へのコントリビューションに感謝します。
 このドキュメントでは、プロジェクトへの貢献方法について説明します。
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -41,8 +41,8 @@
 ### 1. リポジトリをフォーク・クローン
 
 ```bash
-git clone https://github.com/your-username/{{PROJECT_NAME}}.git
-cd {{PROJECT_NAME}}
+git clone https://github.com/your-username/VehicleVision.Pleasanter.ReplicaSync.git
+cd VehicleVision.Pleasanter.ReplicaSync
 ```
 
 ### 2. ブランチを作成

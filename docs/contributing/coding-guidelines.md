@@ -1,6 +1,6 @@
 # コーディングガイドライン
 
-このドキュメントでは、{{PROJECT_NAME}} プロジェクトのコーディング規約について説明します。
+このドキュメントでは、VehicleVision.Pleasanter.ReplicaSync プロジェクトのコーディング規約について説明します。
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -220,14 +220,22 @@ public void SetApiKey(string apiKey)
 
 ### ディレクトリ構造
 
-<!-- TODO: プロジェクトに合わせて更新 -->
-
 ```text
-{{PROJECT_NAME}}/
-├── Models/
-│   ├── Request/
-│   └── Response/
-└── Helpers/
+src/
+├── ReplicaSync.Core/
+│   ├── Enums/
+│   ├── Interfaces/
+│   ├── Models/
+│   └── Services/
+├── ReplicaSync.Infrastructure/
+│   ├── Data/
+│   ├── Extensions/
+│   ├── Pleasanter/
+│   │   └── SqlGenerators/
+│   └── Repositories/
+├── ReplicaSync.Web/
+│   └── Components/Pages/
+└── ReplicaSync.Worker/
 ```
 
 ### usingディレクティブ
@@ -241,7 +249,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
-using {{PROJECT_NAME}}.Models;
+using ReplicaSync.Core.Models;
 ```
 
 ### ファイル内の順序
