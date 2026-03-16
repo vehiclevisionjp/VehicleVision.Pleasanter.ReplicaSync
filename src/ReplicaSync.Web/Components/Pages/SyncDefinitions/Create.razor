@@ -1,0 +1,282 @@
+@page "/sync-definitions/create"
+@using ReplicaSync.Core.Enums
+@using ReplicaSync.Core.Interfaces
+@using ReplicaSync.Core.Models
+@inject ISyncConfigRepository ConfigRepo
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>同期定義作成</PageTitle>
+
+<h1>同期定義作成</h1>
+
+@if (_loadingInstances)
+{
+    <p><em>読み込み中...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-10">
+            <EditForm Model="_definition" OnValidSubmit="HandleSubmitAsync" FormName="CreateSyncDefinition">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
+
+                @if (_errorMessage is not null)
+                {
+                    <div class="alert alert-danger">@_errorMessage</div>
+                }
+
+                <fieldset class="border p-3 mb-3">
+                    <legend class="w-auto px-2 fs-5">基本情報</legend>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="syncId" class="form-label">同期ID</label>
+                            <InputText id="syncId" class="form-control" @bind-Value="_definition.SyncId" placeholder="例: master-employee" />
+                            <ValidationMessage For="() => _definition.SyncId" class="text-danger" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="description" class="form-label">説明</label>
+                            <InputText id="description" class="form-control" @bind-Value="_definition.Description" placeholder="例: 社員マスタ同期" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="topology" class="form-label">トポロジー</label>
+                            <InputSelect id="topology" class="form-select" @bind-Value="_definition.Topology">
+                                @foreach (var t in Enum.GetValues<TopologyType>())
+                                {
+                                    <option value="@t">@t</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="conflictResolution" class="form-label">競合解決方式</label>
+                            <InputSelect id="conflictResolution" class="form-select" @bind-Value="_definition.ConflictResolution">
+                                @foreach (var cr in Enum.GetValues<ConflictResolutionStrategy>())
+                                {
+                                    <option value="@cr">@cr</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="pollingInterval" class="form-label">ポーリング間隔（秒）</label>
+                            <InputNumber id="pollingInterval" class="form-control" @bind-Value="_definition.PollingIntervalSeconds" />
+                            <ValidationMessage For="() => _definition.PollingIntervalSeconds" class="text-danger" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <div class="form-check mt-4">
+                                <InputCheckbox id="isEnabled" class="form-check-input" @bind-Value="_definition.IsEnabled" />
+                                <label for="isEnabled" class="form-check-label">有効</label>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="border p-3 mb-3">
+                    <legend class="w-auto px-2 fs-5">ソース設定</legend>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="sourceInstance" class="form-label">ソースインスタンス</label>
+                            <InputSelect id="sourceInstance" class="form-select" @bind-Value="_definition.SourceInstanceId">
+                                <option value="0">-- 選択してください --</option>
+                                @foreach (var inst in _instances)
+                                {
+                                    <option value="@inst.Id">@inst.DisplayName (@inst.InstanceId)</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="sourceSiteId" class="form-label">ソース SiteId</label>
+                            <InputNumber id="sourceSiteId" class="form-control" @bind-Value="_definition.SourceSiteId" />
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="border p-3 mb-3">
+                    <legend class="w-auto px-2 fs-5">カラム設定</legend>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="syncKeyColumns" class="form-label">同期キーカラム（カンマ区切り）</label>
+                            <InputText id="syncKeyColumns" class="form-control" @bind-Value="_definition.SyncKeyColumns" placeholder="例: ClassA" />
+                            <ValidationMessage For="() => _definition.SyncKeyColumns" class="text-danger" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="includeColumns" class="form-label">対象カラム（カンマ区切り、空=全て）</label>
+                            <InputText id="includeColumns" class="form-control" @bind-Value="_definition.IncludeColumns" placeholder="例: ClassA,ClassB,NumA" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="excludeColumns" class="form-label">除外カラム（カンマ区切り）</label>
+                            <InputText id="excludeColumns" class="form-control" @bind-Value="_definition.ExcludeColumns" placeholder="例: ClassZ" />
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="border p-3 mb-3">
+                    <legend class="w-auto px-2 fs-5">同期ユーザー</legend>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="syncUserId" class="form-label">同期ユーザーID</label>
+                            <InputNumber id="syncUserId" class="form-control" @bind-Value="_definition.SyncUserId" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="syncUserName" class="form-label">同期ユーザー名</label>
+                            <InputText id="syncUserName" class="form-control" @bind-Value="_definition.SyncUserName" />
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="border p-3 mb-3">
+                    <legend class="w-auto px-2 fs-5">ターゲットマッピング</legend>
+
+                    @if (_definition.TargetMappings.Count == 0)
+                    {
+                        <div class="alert alert-info">ターゲットが追加されていません。</div>
+                    }
+
+                    @for (var i = 0; i < _targetMappings.Count; i++)
+                    {
+                        var index = i;
+                        var mapping = _targetMappings[index];
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="card-title mb-0">ターゲット @(index + 1)</h6>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" @onclick="() => RemoveTarget(index)">削除</button>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-6">
+                                        <label class="form-label">ターゲットインスタンス</label>
+                                        <select class="form-select" @bind="mapping.TargetInstanceId">
+                                            <option value="0">-- 選択 --</option>
+                                            @foreach (var inst in _instances)
+                                            {
+                                                <option value="@inst.Id">@inst.DisplayName (@inst.InstanceId)</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">ターゲット SiteId</label>
+                                        <input type="number" class="form-control" @bind="mapping.TargetSiteId" />
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-md-3">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="s2t-@index" @bind="mapping.SourceToTargetEnabled" />
+                                            <label class="form-check-label" for="s2t-@index">ソース→ターゲット</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="t2s-@index" @bind="mapping.TargetToSourceEnabled" />
+                                            <label class="form-check-label" for="t2s-@index">ターゲット→ソース</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">ターゲット除外カラム</label>
+                                        <input type="text" class="form-control" @bind="mapping.TargetExcludeColumns" placeholder="カンマ区切り" />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">逆方向除外カラム</label>
+                                        <input type="text" class="form-control" @bind="mapping.TargetToSourceExcludeColumns" placeholder="カンマ区切り" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <button type="button" class="btn btn-outline-primary btn-sm" @onclick="AddTarget">
+                        <span class="bi bi-plus-circle" aria-hidden="true"></span> ターゲット追加
+                    </button>
+                </fieldset>
+
+                <div class="mb-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary" disabled="@_submitting">
+                        @if (_submitting)
+                        {
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            <span>保存中...</span>
+                        }
+                        else
+                        {
+                            <span>作成</span>
+                        }
+                    </button>
+                    <a href="sync-definitions" class="btn btn-secondary">キャンセル</a>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    private SyncDefinition _definition = new();
+    private List<SyncTargetMapping> _targetMappings = [];
+    private IReadOnlyList<SyncInstance> _instances = [];
+    private bool _loadingInstances = true;
+    private bool _submitting;
+    private string? _errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _instances = await ConfigRepo.GetAllInstancesAsync();
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"インスタンスの読み込みに失敗しました: {ex.Message}";
+        }
+        finally
+        {
+            _loadingInstances = false;
+        }
+    }
+
+    private void AddTarget()
+    {
+        var mapping = new SyncTargetMapping { SourceToTargetEnabled = true };
+        _targetMappings.Add(mapping);
+    }
+
+    private void RemoveTarget(int index)
+    {
+        if (index >= 0 && index < _targetMappings.Count)
+        {
+            _targetMappings.RemoveAt(index);
+        }
+    }
+
+    private async Task HandleSubmitAsync()
+    {
+        _submitting = true;
+        _errorMessage = null;
+
+        try
+        {
+            _definition.TargetMappings = _targetMappings;
+            await ConfigRepo.CreateDefinitionAsync(_definition);
+            Navigation.NavigateTo("sync-definitions");
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"作成に失敗しました: {ex.Message}";
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+}
