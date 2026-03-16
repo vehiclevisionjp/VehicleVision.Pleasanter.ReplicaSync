@@ -1,0 +1,187 @@
+@page "/instances/edit/{Id:int}"
+@using ReplicaSync.Core.Enums
+@using ReplicaSync.Core.Interfaces
+@using ReplicaSync.Core.Models
+@inject ISyncConfigRepository ConfigRepo
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>インスタンス編集</PageTitle>
+
+<h1>インスタンス編集</h1>
+
+@if (_loading)
+{
+    <p><em>読み込み中...</em></p>
+}
+else if (_notFound)
+{
+    <div class="alert alert-warning">指定されたインスタンスが見つかりません。</div>
+    <a href="instances" class="btn btn-secondary">一覧に戻る</a>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-8">
+            <EditForm Model="_instance" OnValidSubmit="HandleSubmitAsync" FormName="EditInstance">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
+
+                @if (_errorMessage is not null)
+                {
+                    <div class="alert alert-danger">@_errorMessage</div>
+                }
+
+                @if (_successMessage is not null)
+                {
+                    <div class="alert alert-success">@_successMessage</div>
+                }
+
+                <div class="mb-3">
+                    <label for="instanceId" class="form-label">インスタンスID</label>
+                    <InputText id="instanceId" class="form-control" @bind-Value="_instance.InstanceId" />
+                    <ValidationMessage For="() => _instance.InstanceId" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="displayName" class="form-label">表示名</label>
+                    <InputText id="displayName" class="form-control" @bind-Value="_instance.DisplayName" />
+                    <ValidationMessage For="() => _instance.DisplayName" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="dbmsType" class="form-label">DBタイプ</label>
+                    <InputSelect id="dbmsType" class="form-select" @bind-Value="_instance.DbmsType">
+                        @foreach (var dbType in Enum.GetValues<DbmsType>())
+                        {
+                            <option value="@dbType">@dbType</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <div class="mb-3">
+                    <label for="connectionString" class="form-label">接続文字列</label>
+                    <InputText id="connectionString" class="form-control" @bind-Value="_instance.ConnectionString" />
+                    <ValidationMessage For="() => _instance.ConnectionString" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <span class="text-muted">作成日時: @_instance.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</span>
+                </div>
+
+                <div class="mb-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary" disabled="@_submitting">
+                        @if (_submitting)
+                        {
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            <span>保存中...</span>
+                        }
+                        else
+                        {
+                            <span>更新</span>
+                        }
+                    </button>
+                    <button type="button" class="btn btn-outline-info" @onclick="TestConnectionAsync" disabled="@_testing">
+                        @if (_testing)
+                        {
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            <span>テスト中...</span>
+                        }
+                        else
+                        {
+                            <span>接続テスト</span>
+                        }
+                    </button>
+                    <a href="instances" class="btn btn-secondary">キャンセル</a>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private SyncInstance _instance = new();
+    private bool _loading = true;
+    private bool _notFound;
+    private bool _submitting;
+    private bool _testing;
+    private string? _errorMessage;
+    private string? _successMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var instance = await ConfigRepo.GetInstanceByIdAsync(Id);
+            if (instance is null)
+            {
+                _notFound = true;
+            }
+            else
+            {
+                _instance = instance;
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"データの読み込みに失敗しました: {ex.Message}";
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task HandleSubmitAsync()
+    {
+        _submitting = true;
+        _errorMessage = null;
+        _successMessage = null;
+
+        try
+        {
+            _instance.UpdatedAt = DateTime.UtcNow;
+            await ConfigRepo.UpdateInstanceAsync(_instance);
+            Navigation.NavigateTo("instances");
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"更新に失敗しました: {ex.Message}";
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+
+    private async Task TestConnectionAsync()
+    {
+        _testing = true;
+        _errorMessage = null;
+        _successMessage = null;
+
+        try
+        {
+            await Task.Delay(500);
+
+            if (string.IsNullOrWhiteSpace(_instance.ConnectionString))
+            {
+                _errorMessage = "接続文字列を入力してください。";
+                return;
+            }
+
+            _successMessage = "接続テストは現在シミュレーションモードです。実装後に実際の接続テストが行われます。";
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"接続テストに失敗しました: {ex.Message}";
+        }
+        finally
+        {
+            _testing = false;
+        }
+    }
+}

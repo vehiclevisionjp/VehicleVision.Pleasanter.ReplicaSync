@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ReplicaSync.Core/ReplicaSync.Core.csproj" />
+    <Project Path="src/ReplicaSync.Infrastructure/ReplicaSync.Infrastructure.csproj" />
+    <Project Path="src/ReplicaSync.Web/ReplicaSync.Web.csproj" />
+    <Project Path="src/ReplicaSync.Worker/ReplicaSync.Worker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ReplicaSync.Core.Tests/ReplicaSync.Core.Tests.csproj" />
+  </Folder>
+</Solution>
