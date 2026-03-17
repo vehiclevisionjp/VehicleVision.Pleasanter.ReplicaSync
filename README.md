@@ -71,7 +71,14 @@ dotnet add package VehicleVision.Pleasanter.ReplicaSync.Worker
 
 ### 設定
 
-`appsettings.json` で構成データベースの接続先を設定します。
+構成データベース（空のデータベース）を事前に作成します。テーブルはアプリケーション起動時に自動作成されます。
+
+```sql
+-- SQL Server の例
+CREATE DATABASE ReplicaSync;
+```
+
+Web UI・Worker **両方**の `appsettings.json` で、同じ構成データベースの接続先を設定します。
 
 ```json
 {
@@ -87,15 +94,26 @@ dotnet add package VehicleVision.Pleasanter.ReplicaSync.Worker
 
 ### 起動
 
+インストール先のルートディレクトリ（`ReplicaSyncWeb` / `ReplicaSyncWorker` の親ディレクトリ）で実行します。
+
 ```bash
 # Web UI を起動（ブラウザで管理画面にアクセス）
 dotnet run --project ReplicaSyncWeb
 
-# Worker サービスを起動（バックグラウンド同期を実行）
+# Worker サービスを起動（別ターミナルでバックグラウンド同期を実行）
 dotnet run --project ReplicaSyncWorker
 ```
 
-Web UI のダッシュボードから、以下の操作が可能です：
+Web UI（既定: `http://localhost:5000`）にアクセスし、初期管理者アカウントでログインします。
+
+| 項目         | 既定値           |
+| ------------ | ---------------- |
+| ユーザー名   | `administrator`  |
+| パスワード   | `vehiclevision`  |
+
+> **重要**: 初回ログイン時にパスワードの変更が求められます。必ず安全なパスワードに変更してください。
+
+ダッシュボードから、以下の操作が可能です：
 
 - 同期インスタンスの登録・編集・削除
 - 同期定義の作成・有効化・無効化
