@@ -106,18 +106,37 @@ flowchart TB
 
 ```mermaid
 flowchart TD
-    A[push / PR] --> B[リポジトリをチェックアウト]
+    A[push / PR] --> B[build-and-test ジョブ]
     B --> C[.NET 10 セットアップ]
     C --> D[NuGet パッケージ復元]
     D --> E[Release 構成でビルド]
-    E --> F[テスト実行 + カバレッジ収集\nE2E テストは除外]
+    E --> F[ユニットテスト実行 + カバレッジ収集\nE2E テストは除外]
     F --> G{結果}
-    G -->|成功| H[✅ CI パス]
+    G -->|成功| H[e2e-test ジョブ]
     G -->|失敗| I[❌ CI 失敗]
 
-    style H fill:#c8e6c9
+    H --> J[SQL Server コンテナ起動]
+    J --> K[ビルド + Playwright インストール]
+    K --> L[Web アプリ起動]
+    L --> M[E2E テスト実行]
+    M --> N{結果}
+    N -->|成功| O[✅ CI パス]
+    N -->|失敗| P[❌ E2E 失敗]
+    M --> Q[スクリーンショットをアーティファクトに保存]
+
+    style O fill:#c8e6c9
     style I fill:#ffcdd2
+    style P fill:#ffcdd2
 ```
+
+CI ワークフローは 2 つのジョブで構成される:
+
+| ジョブ           | 内容                                                           |
+| ---------------- | -------------------------------------------------------------- |
+| `build-and-test` | ビルドとユニットテストの実行（E2E テストを除外）               |
+| `e2e-test`       | SQL Server コンテナ上で Web アプリを起動し Playwright E2E 実行 |
+
+`e2e-test` ジョブは `build-and-test` の成功後に実行される。E2E テストで取得したスクリーンショットは Actions のアーティファクトとしてダウンロード可能。
 
 ---
 
