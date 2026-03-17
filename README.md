@@ -43,6 +43,52 @@ Hub-Spoke / Peer-to-Peer トポロジ、複数の競合解決戦略、マルチD
 - **バックグラウンドサービス** - .NET Worker Service による継続的なポーリング同期
 - **デスクトップアプリ** - Photino ベースのクロスプラットフォーム対応デスクトップクライアント（Windows / Linux / macOS）
 
+## システム構成
+
+<!-- markdownlint-disable MD013 -->
+
+```mermaid
+flowchart TB
+    subgraph packages["NuGet パッケージ"]
+        Worker["<b>Worker</b>\nバックグラウンド同期サービス\n定義に従いポーリング・同期を自動実行"]
+        Web["<b>Web</b>\nBlazor Server 管理 UI + REST API\nインスタンス・定義・ログを管理"]
+        Desktop["<b>Desktop</b>\nデスクトップアプリ（Photino）\nWeb UI を内蔵し単体で動作"]
+    end
+
+    subgraph configdb["構成データベース（共有）"]
+        ConfigDB[("Config DB\nSQL Server / PostgreSQL / MySQL\n\n同期インスタンス定義\n同期定義・マッピング\n同期ログ・監査ログ")]
+    end
+
+    subgraph pleasanter["Pleasanter インスタンス"]
+        PA[("Pleasanter A の DB\n（同期元 / 同期先）")]
+        PB[("Pleasanter B の DB\n（同期元 / 同期先）")]
+        PC[("Pleasanter C の DB\n...")]
+    end
+
+    Worker -- "同期定義を読み取り\n結果をログ記録" --> ConfigDB
+    Worker -- "変更検出 → Upsert/Delete" --> PA
+    Worker -- "変更検出 → Upsert/Delete" --> PB
+    Worker -. "追加インスタンス" .-> PC
+
+    Web -- "CRUD 操作" --> ConfigDB
+    Desktop -- "CRUD 操作" --> ConfigDB
+
+    style Worker fill:#4a9,color:#fff
+    style Web fill:#49a,color:#fff
+    style Desktop fill:#a49,color:#fff
+```
+
+<!-- markdownlint-enable MD013 -->
+
+| パッケージ    | 役割                                                                 |
+| ------------- | -------------------------------------------------------------------- |
+| **Worker**    | 同期エンジン本体。構成 DB の定義に従い Pleasanter DB 間でデータ同期  |
+| **Web**       | 管理画面・API。同期インスタンスや定義の登録、ログ確認を行う          |
+| **Desktop**   | Web UI を内蔵したデスクトップアプリ。サーバ不要で単体起動可能        |
+
+> Worker と Web（または Desktop）は**同じ構成データベース**を参照します。
+> Web / Desktop で定義を作成し、Worker が自動的にその定義を読み取って同期を実行します。
+
 ## クイックスタート
 
 ### 前提条件
