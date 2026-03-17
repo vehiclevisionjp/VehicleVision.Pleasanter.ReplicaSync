@@ -25,19 +25,22 @@
 
 ### テストプロジェクト構成
 
-| 項目                     | 内容                                                                          |
-| ------------------------ | ----------------------------------------------------------------------------- |
+| 項目                     | 内容                                                                                    |
+| ------------------------ | --------------------------------------------------------------------------------------- |
 | プロジェクト名           | `ReplicaSync.Core.Tests` / `ReplicaSync.Infrastructure.Tests` / `ReplicaSync.Web.Tests` |
-| テストフレームワーク     | xUnit                                                                         |
-| ターゲットフレームワーク | .NET 10                                                                       |
-| カバレッジツール         | coverlet.collector                                                            |
+| テストフレームワーク     | xUnit                                                                                   |
+| ターゲットフレームワーク | .NET 10                                                                                 |
+| カバレッジツール         | coverlet.collector                                                                      |
 
 ### ディレクトリ構造
 
 ```text
 ReplicaSync.Core.Tests/
 ├── ReplicaSync.Core.Tests.csproj
+├── Enums/
+│   └── AppRoleTests.cs
 ├── Models/
+│   ├── AppUserTests.cs
 │   ├── PleasanterRecordTests.cs
 │   ├── SyncDefinitionTests.cs
 │   └── SyncTargetMappingTests.cs

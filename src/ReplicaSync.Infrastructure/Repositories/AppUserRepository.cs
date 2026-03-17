@@ -22,6 +22,23 @@ public class AppUserRepository : IAppUserRepository
     }
 
     /// <inheritdoc />
+    public async Task<IReadOnlyList<AppUser>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.AppUsers
+            .OrderBy(u => u.Id)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<AppUser?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return await _context.AppUsers
+            .FindAsync([id], cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
     public async Task<AppUser?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(username);
@@ -52,6 +69,20 @@ public class AppUserRepository : IAppUserRepository
         _context.AppUsers.Update(user);
         await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         return user;
+    }
+
+    /// <inheritdoc />
+    public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var user = await _context.AppUsers
+            .FindAsync([id], cancellationToken)
+            .ConfigureAwait(false);
+
+        if (user is not null)
+        {
+            _context.AppUsers.Remove(user);
+            await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
     }
 
     /// <inheritdoc />

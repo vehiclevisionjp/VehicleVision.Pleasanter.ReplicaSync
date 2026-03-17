@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using ReplicaSync.Core.Enums;
 
 namespace ReplicaSync.Core.Models;
 
@@ -18,6 +19,9 @@ public class AppUser
     /// <summary>Gets or sets the PBKDF2 password hash (format: "base64salt:base64hash").</summary>
     [Required]
     public string PasswordHash { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the user's role.</summary>
+    public AppRole Role { get; set; } = AppRole.User;
 
     /// <summary>Gets or sets whether the user must change their password at next login.</summary>
     public bool MustChangePassword { get; set; }

@@ -52,7 +52,11 @@ try
         .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(
             ApiKeyAuthenticationHandler.SchemeName, _ => { });
 
-    builder.Services.AddAuthorization();
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("AdminOnly", policy =>
+            policy.RequireRole(nameof(AppRole.Administrator)));
+    });
     builder.Services.AddCascadingAuthenticationState();
 
     // Add Blazor services
@@ -84,6 +88,7 @@ try
             {
                 Username = securityConfig.InitialAdminUsername,
                 PasswordHash = PasswordHasher.HashPassword(securityConfig.InitialAdminPassword),
+                Role = AppRole.Administrator,
                 MustChangePassword = true,
             };
             await userRepo.CreateAsync(initialUser);
