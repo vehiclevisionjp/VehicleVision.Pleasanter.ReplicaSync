@@ -1,4 +1,4 @@
-using ReplicaSync.Core.Enums;
+﻿using ReplicaSync.Core.Enums;
 
 namespace ReplicaSync.Infrastructure.Pleasanter.SqlGenerators;
 
@@ -18,6 +18,9 @@ public interface ISqlGenerator
 
     /// <summary>Quotes an identifier (table name, column name).</summary>
     string QuoteIdentifier(string identifier);
+
+    /// <summary>Gets the ID column name for the given table (ResultId, IssueId, or WikiId).</summary>
+    string GetIdColumnName(string tableName);
 
     /// <summary>Gets SQL to determine the reference type for a site.</summary>
     string GetReferenceTypeSql();

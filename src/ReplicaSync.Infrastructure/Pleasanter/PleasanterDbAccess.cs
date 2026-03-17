@@ -1,4 +1,4 @@
-using System.Data;
+﻿using System.Data;
 using System.Data.Common;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
@@ -86,6 +86,7 @@ public class PleasanterDbAccess : IPleasanterDbAccess
         {
             "Results" => ReferenceType.Results,
             "Issues" => ReferenceType.Issues,
+            "Wikis" => ReferenceType.Wikis,
             _ => throw new InvalidOperationException($"Unsupported reference type: {refTypeStr}")
         };
     }
@@ -370,7 +371,7 @@ public class PleasanterDbAccess : IPleasanterDbAccess
 
     private static PleasanterRecord ReadBaseRecord(DbDataReader reader)
     {
-        return new PleasanterRecord
+        var record = new PleasanterRecord
         {
             RecordId = reader.GetInt64(reader.GetOrdinal("RecordId")),
             SiteId = reader.GetInt64(reader.GetOrdinal("SiteId")),
@@ -382,6 +383,27 @@ public class PleasanterDbAccess : IPleasanterDbAccess
             CreatedTime = reader.GetDateTime(reader.GetOrdinal("CreatedTime")),
             UpdatedTime = reader.GetDateTime(reader.GetOrdinal("UpdatedTime"))
         };
+
+        if (HasColumn(reader, "Locked"))
+        {
+            var ordinal = reader.GetOrdinal("Locked");
+            record.Locked = !reader.IsDBNull(ordinal) && reader.GetBoolean(ordinal);
+        }
+
+        return record;
+    }
+
+    private static bool HasColumn(DbDataReader reader, string columnName)
+    {
+        for (var i = 0; i < reader.FieldCount; i++)
+        {
+            if (string.Equals(reader.GetName(i), columnName, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static string GetStringOrEmpty(DbDataReader reader, string columnName)
@@ -426,6 +448,11 @@ public class PleasanterDbAccess : IPleasanterDbAccess
             AddParameter(insertCmd, "@Updator", syncUserId);
             AddParameter(insertCmd, "@CreatedTime", DateTime.UtcNow);
             AddParameter(insertCmd, "@UpdatedTime", DateTime.UtcNow);
+
+            if (tableName == "Wikis")
+            {
+                AddParameter(insertCmd, "@Locked", sourceRecord.Locked);
+            }
 
             foreach (var col in syncColumns)
             {
@@ -479,6 +506,11 @@ public class PleasanterDbAccess : IPleasanterDbAccess
             AddParameter(updateCmd, "@Title", sourceRecord.Title);
             AddParameter(updateCmd, "@Body", sourceRecord.Body);
             AddParameter(updateCmd, "@SyncUserId", syncUserId);
+
+            if (tableName == "Wikis")
+            {
+                AddParameter(updateCmd, "@Locked", sourceRecord.Locked);
+            }
 
             foreach (var col in syncColumns)
             {

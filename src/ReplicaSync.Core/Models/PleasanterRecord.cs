@@ -1,4 +1,4 @@
-namespace ReplicaSync.Core.Models;
+﻿namespace ReplicaSync.Core.Models;
 
 /// <summary>
 /// Represents a record from a Pleasanter Results or Issues table.
@@ -31,6 +31,9 @@ public class PleasanterRecord
 
     /// <summary>Gets or sets when the record was last updated.</summary>
     public DateTime UpdatedTime { get; set; }
+
+    /// <summary>Gets or sets the locked state (Wikis only).</summary>
+    public bool Locked { get; set; }
 
     /// <summary>Gets or sets the column values (ClassA-ClassZ, NumA-NumZ, DateA-DateZ, DescriptionA-DescriptionZ).</summary>
     public Dictionary<string, object?> ColumnValues { get; set; } = new();

@@ -82,19 +82,25 @@ ConnectionString: Server=localhost;Database=Implem.Pleasanter;Trusted_Connection
 | `SyncKeyColumns`         | `string`                     | 同期キーカラム（カンマ区切り）                   |
 | `IncludeColumns`         | `string`                     | 同期対象カラム（カンマ区切り、省略時は全カラム） |
 | `ExcludeColumns`         | `string`                     | 同期除外カラム（カンマ区切り）                   |
+| `RecordFilterInclude`    | `string?`                    | レコードフィルタ（含む条件、JSON）               |
+| `RecordFilterExclude`    | `string?`                    | レコードフィルタ（除外条件、JSON）               |
+| `AttachmentsEnabled`     | `bool`                       | 添付ファイル同期の有効/無効                      |
+| `AttachmentsStorageType` | `string`                     | 添付ファイルの保存方式（`Rds` のみ対応）         |
 
 ## ターゲットマッピング（SyncTargetMapping）
 
 同期定義に対するターゲットインスタンスのマッピングを設定します。
 
-| プロパティ                     | 型       | 説明                                         |
-| ------------------------------ | -------- | -------------------------------------------- |
-| `TargetInstanceId`             | `int`    | ターゲットインスタンスの ID                  |
-| `TargetSiteId`                 | `long`   | ターゲット Pleasanter サイト ID              |
-| `SourceToTargetEnabled`        | `bool`   | ソースからターゲットへの同期を有効化         |
-| `TargetToSourceEnabled`        | `bool`   | ターゲットからソースへの同期を有効化         |
-| `TargetToSourceExcludeColumns` | `string` | ターゲットからソースへの同期で除外するカラム |
-| `TargetExcludeColumns`         | `string` | ターゲット側で除外するカラム                 |
+| プロパティ                     | 型        | 説明                                           |
+| ------------------------------ | --------- | ---------------------------------------------- |
+| `TargetInstanceId`             | `int`     | ターゲットインスタンスの ID                    |
+| `TargetSiteId`                 | `long`    | ターゲット Pleasanter サイト ID                |
+| `SourceToTargetEnabled`        | `bool`    | ソースからターゲットへの同期を有効化           |
+| `TargetToSourceEnabled`        | `bool`    | ターゲットからソースへの同期を有効化           |
+| `TargetToSourceExcludeColumns` | `string`  | ターゲットからソースへの同期で除外するカラム   |
+| `TargetExcludeColumns`         | `string`  | ターゲット側で除外するカラム                   |
+| `RecordFilterIncludeOverride`  | `string?` | レコードフィルタ（含む条件）のターゲット上書き |
+| `RecordFilterExcludeOverride`  | `string?` | レコードフィルタ（除外条件）のターゲット上書き |
 
 ## カラム指定
 

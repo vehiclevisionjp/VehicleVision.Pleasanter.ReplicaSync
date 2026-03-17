@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ReplicaSync.Core.Models;
 
 namespace ReplicaSync.Infrastructure.Data;
@@ -55,6 +55,9 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Topology).HasConversion<string>().HasMaxLength(50);
             entity.Property(e => e.ConflictResolution).HasConversion<string>().HasMaxLength(50);
             entity.Property(e => e.ChangeDetectionMethod).HasConversion<string>().HasMaxLength(50);
+            entity.Property(e => e.RecordFilterInclude).HasMaxLength(4000);
+            entity.Property(e => e.RecordFilterExclude).HasMaxLength(4000);
+            entity.Property(e => e.AttachmentsStorageType).HasMaxLength(50);
 
             entity.HasOne(e => e.SourceInstance)
                 .WithMany()
@@ -72,6 +75,8 @@ public class AppDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.TargetToSourceExcludeColumns).HasMaxLength(2000);
             entity.Property(e => e.TargetExcludeColumns).HasMaxLength(2000);
+            entity.Property(e => e.RecordFilterIncludeOverride).HasMaxLength(4000);
+            entity.Property(e => e.RecordFilterExcludeOverride).HasMaxLength(4000);
 
             entity.HasOne(e => e.TargetInstance)
                 .WithMany()

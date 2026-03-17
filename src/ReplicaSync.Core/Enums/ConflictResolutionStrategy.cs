@@ -1,4 +1,4 @@
-namespace ReplicaSync.Core.Enums;
+﻿namespace ReplicaSync.Core.Enums;
 
 /// <summary>Strategy for resolving sync conflicts</summary>
 public enum ConflictResolutionStrategy
@@ -10,5 +10,8 @@ public enum ConflictResolutionStrategy
     LastWriteWins,
 
     /// <summary>Log conflict for manual resolution</summary>
-    ManualResolution
+    ManualResolution,
+
+    /// <summary>Compare each column's last update time and merge at field level</summary>
+    FieldLevelMerge
 }

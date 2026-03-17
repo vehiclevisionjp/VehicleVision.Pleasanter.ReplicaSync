@@ -1,4 +1,4 @@
-using ReplicaSync.Core.Enums;
+﻿using ReplicaSync.Core.Enums;
 
 namespace ReplicaSync.Infrastructure.Pleasanter.SqlGenerators;
 
@@ -24,6 +24,15 @@ public class MySqlSqlGenerator : ISqlGenerator
     }
 
     /// <inheritdoc />
+    public string GetIdColumnName(string tableName) => tableName switch
+    {
+        "Results" => "ResultId",
+        "Issues" => "IssueId",
+        "Wikis" => "WikiId",
+        _ => throw new ArgumentOutOfRangeException(nameof(tableName), tableName, "Unsupported table name.")
+    };
+
+    /// <inheritdoc />
     public string GetReferenceTypeSql()
     {
         return "SELECT `ReferenceType` FROM `Sites` WHERE `SiteId` = @SiteId";
@@ -36,12 +45,19 @@ public class MySqlSqlGenerator : ISqlGenerator
         ArgumentNullException.ThrowIfNull(columns);
 
         var q = QuoteIdentifier(tableName);
-        var idCol = tableName == "Results" ? "`ResultId`" : "`IssueId`";
-        var selectCols = string.Join(", ", columns.Select(c => QuoteIdentifier(c)));
+        var idCol = QuoteIdentifier(GetIdColumnName(tableName));
+        var baseCols = "`SiteId`, `Ver`, `Title`, `Body`, `Creator`, `Updator`, `CreatedTime`, `UpdatedTime`";
+        if (tableName == "Wikis")
+        {
+            baseCols += ", `Locked`";
+        }
+
+        var selectCols = columns.Count > 0
+            ? ", " + string.Join(", ", columns.Select(c => QuoteIdentifier(c)))
+            : string.Empty;
 
         return $"""
-            SELECT {idCol} AS `RecordId`, `SiteId`, `Ver`, `Title`, `Body`,
-                   `Creator`, `Updator`, `CreatedTime`, `UpdatedTime`, {selectCols}
+            SELECT {idCol} AS `RecordId`, {baseCols}{selectCols}
             FROM {q}
             WHERE `SiteId` = @SiteId
               AND `UpdatedTime` > @LastSyncTime
@@ -57,11 +73,13 @@ public class MySqlSqlGenerator : ISqlGenerator
         ArgumentNullException.ThrowIfNull(syncKeyColumns);
 
         var deletedTable = QuoteIdentifier($"{tableName}_deleted");
-        var idCol = tableName == "Results" ? "`ResultId`" : "`IssueId`";
-        var keyCols = string.Join(", ", syncKeyColumns.Select(c => QuoteIdentifier(c)));
+        var idCol = QuoteIdentifier(GetIdColumnName(tableName));
+        var keyCols = syncKeyColumns.Count > 0
+            ? ", " + string.Join(", ", syncKeyColumns.Select(c => QuoteIdentifier(c)))
+            : string.Empty;
 
         return $"""
-            SELECT {idCol} AS `RecordId`, `SiteId`, {keyCols}, `UpdatedTime`
+            SELECT {idCol} AS `RecordId`, `SiteId`{keyCols}, `UpdatedTime`
             FROM {deletedTable}
             WHERE `SiteId` = @SiteId
               AND `UpdatedTime` > @LastSyncTime
@@ -76,12 +94,16 @@ public class MySqlSqlGenerator : ISqlGenerator
         ArgumentNullException.ThrowIfNull(syncKeyColumns);
 
         var q = QuoteIdentifier(tableName);
-        var idCol = tableName == "Results" ? "`ResultId`" : "`IssueId`";
+        var idCol = QuoteIdentifier(GetIdColumnName(tableName));
         var keyConditions = string.Join(" AND ", syncKeyColumns.Select(c => $"{QuoteIdentifier(c)} = @Key_{c}"));
+        var baseCols = "`SiteId`, `Ver`, `Title`, `Body`, `Creator`, `Updator`, `CreatedTime`, `UpdatedTime`";
+        if (tableName == "Wikis")
+        {
+            baseCols += ", `Locked`";
+        }
 
         return $"""
-            SELECT {idCol} AS `RecordId`, `SiteId`, `Ver`, `Title`, `Body`,
-                   `Creator`, `Updator`, `CreatedTime`, `UpdatedTime`
+            SELECT {idCol} AS `RecordId`, {baseCols}
             FROM {q}
             WHERE `SiteId` = @SiteId AND {keyConditions}
             """;
@@ -95,6 +117,11 @@ public class MySqlSqlGenerator : ISqlGenerator
 
         var q = QuoteIdentifier(tableName);
         var allCols = new List<string> { "SiteId", "Title", "Body", "Ver", "Creator", "Updator", "CreatedTime", "UpdatedTime" };
+        if (tableName == "Wikis")
+        {
+            allCols.Add("Locked");
+        }
+
         allCols.AddRange(columns);
         var colList = string.Join(", ", allCols.Select(c => QuoteIdentifier(c)));
         var paramList = string.Join(", ", allCols.Select(c => $"@{c}"));
@@ -122,6 +149,11 @@ public class MySqlSqlGenerator : ISqlGenerator
             "`Updator` = @SyncUserId",
             $"`UpdatedTime` = {CurrentTimestampFunction}"
         };
+        if (tableName == "Wikis")
+        {
+            setClauses.Add("`Locked` = @Locked");
+        }
+
         var setStr = string.Join(", ", setClauses);
         var keyConditions = string.Join(" AND ", syncKeyColumns.Select(c => $"{QuoteIdentifier(c)} = @Key_{c}"));
 
@@ -153,7 +185,7 @@ public class MySqlSqlGenerator : ISqlGenerator
 
         var src = QuoteIdentifier(tableName);
         var dst = QuoteIdentifier($"{tableName}_deleted");
-        var idCol = tableName == "Results" ? "`ResultId`" : "`IssueId`";
+        var idCol = QuoteIdentifier(GetIdColumnName(tableName));
 
         return $"INSERT INTO {dst} SELECT * FROM {src} WHERE {idCol} = @RecordId AND `SiteId` = @SiteId";
     }
@@ -165,7 +197,7 @@ public class MySqlSqlGenerator : ISqlGenerator
         ArgumentNullException.ThrowIfNull(syncKeyColumns);
 
         var q = QuoteIdentifier(tableName);
-        var idCol = tableName == "Results" ? "`ResultId`" : "`IssueId`";
+        var idCol = QuoteIdentifier(GetIdColumnName(tableName));
         return $"DELETE FROM {q} WHERE {idCol} = @RecordId AND `SiteId` = @SiteId";
     }
 

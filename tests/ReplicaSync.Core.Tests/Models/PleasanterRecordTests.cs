@@ -1,4 +1,4 @@
-using ReplicaSync.Core.Models;
+﻿using ReplicaSync.Core.Models;
 
 namespace ReplicaSync.Core.Tests.Models;
 
@@ -106,6 +106,7 @@ public class PleasanterRecordTests
         Assert.Equal(string.Empty, record.Body);
         Assert.Equal(0, record.Creator);
         Assert.Equal(0, record.Updator);
+        Assert.False(record.Locked);
         Assert.False(record.IsDeleted);
         Assert.NotNull(record.ColumnValues);
         Assert.Empty(record.ColumnValues);

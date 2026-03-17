@@ -1,3 +1,4 @@
+﻿using ReplicaSync.Core.Enums;
 using ReplicaSync.Core.Models;
 
 namespace ReplicaSync.Core.Services;
@@ -13,12 +14,15 @@ public static class SyncRuleEngine
     /// </summary>
     public static IReadOnlyList<string> GetEffectiveColumns(
         SyncDefinition definition,
-        SyncTargetMapping targetMapping)
+        SyncTargetMapping targetMapping,
+        ReferenceType referenceType = ReferenceType.Results)
     {
         ArgumentNullException.ThrowIfNull(definition);
         ArgumentNullException.ThrowIfNull(targetMapping);
 
-        var allPleasanterColumns = GetAllPleasanterDataColumns();
+        var allPleasanterColumns = referenceType == ReferenceType.Wikis
+            ? GetWikiDataColumns()
+            : GetAllPleasanterDataColumns();
         var includeList = definition.GetIncludeColumnList();
         var excludeList = definition.GetExcludeColumnList();
 
@@ -64,6 +68,7 @@ public static class SyncRuleEngine
             Ver = sourceRecord.Ver,
             Title = effectiveSet.Contains("Title") ? sourceRecord.Title : string.Empty,
             Body = effectiveSet.Contains("Body") ? sourceRecord.Body : string.Empty,
+            Locked = sourceRecord.Locked,
             Creator = sourceRecord.Creator,
             Updator = sourceRecord.Updator,
             CreatedTime = sourceRecord.CreatedTime,
@@ -105,5 +110,13 @@ public static class SyncRuleEngine
         }
 
         return columns.AsReadOnly();
+    }
+
+    /// <summary>
+    /// Gets Wiki-specific data columns (Title and Body only — Wikis have no Class/Num/Date/Description columns).
+    /// </summary>
+    public static IReadOnlyList<string> GetWikiDataColumns()
+    {
+        return new List<string> { "Title", "Body" }.AsReadOnly();
     }
 }

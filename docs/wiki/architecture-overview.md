@@ -5,16 +5,17 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [システム概要](#システム概要)
-- [レイヤー構造](#レイヤー構造)
+- [アーキテクチャ概要](#アーキテクチャ概要)
+  - [システム概要](#システム概要)
+  - [レイヤー構造](#レイヤー構造)
     - [ReplicaSync.Core](#replicasynccore)
     - [ReplicaSync.Infrastructure](#replicasyncinfrastructure)
     - [ReplicaSync.Web](#replicasyncweb)
     - [ReplicaSync.Worker](#replicasyncworker)
-- [プロジェクト構成](#プロジェクト構成)
-- [データフロー](#データフロー)
-- [対応データベース](#対応データベース)
-- [同期トポロジ](#同期トポロジ)
+  - [プロジェクト構成](#プロジェクト構成)
+  - [データフロー](#データフロー)
+  - [対応データベース](#対応データベース)
+  - [同期トポロジ](#同期トポロジ)
     - [Hub-Spoke（親子）](#hub-spoke親子)
     - [Peer-to-Peer](#peer-to-peer)
 
@@ -23,7 +24,7 @@
 ## システム概要
 
 VehicleVision.Pleasanter.ReplicaSync は、複数の Pleasanter インスタンス間でデータを同期するためのプラットフォームです。
-ADO.NET による直接データベースアクセスを使用し、Pleasanter の Results テーブルおよび Issues テーブルのデータを同期します。
+ADO.NET による直接データベースアクセスを使用し、Pleasanter の Results テーブル、Issues テーブル、および Wikis テーブルのデータを同期します。
 
 ## レイヤー構造
 

@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using ReplicaSync.Core.Enums;
 
 namespace ReplicaSync.Core.Models;
@@ -64,6 +64,21 @@ public class SyncDefinition
     /// <summary>Gets or sets the default excluded columns (comma-separated).</summary>
     [MaxLength(2000)]
     public string ExcludeColumns { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the record filter include conditions as JSON (e.g., {"ClassB": "approved"}).</summary>
+    [MaxLength(4000)]
+    public string? RecordFilterInclude { get; set; }
+
+    /// <summary>Gets or sets the record filter exclude conditions as JSON (e.g., {"ClassC": "confidential"}).</summary>
+    [MaxLength(4000)]
+    public string? RecordFilterExclude { get; set; }
+
+    /// <summary>Gets or sets whether attachment (Binaries) sync is enabled.</summary>
+    public bool AttachmentsEnabled { get; set; }
+
+    /// <summary>Gets or sets the attachment storage type (only "Rds" is supported).</summary>
+    [MaxLength(50)]
+    public string AttachmentsStorageType { get; set; } = "Rds";
 
     /// <summary>Gets or sets the target mappings.</summary>
     public ICollection<SyncTargetMapping> TargetMappings { get; set; } = new List<SyncTargetMapping>();

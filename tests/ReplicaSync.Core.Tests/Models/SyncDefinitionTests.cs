@@ -1,4 +1,4 @@
-using ReplicaSync.Core.Enums;
+﻿using ReplicaSync.Core.Enums;
 using ReplicaSync.Core.Models;
 
 namespace ReplicaSync.Core.Tests.Models;
@@ -82,6 +82,21 @@ public class SyncDefinitionTests
         Assert.Equal("NumB", result[2]);
     }
 
+    [Fact]
+    public void GetIncludeColumnListShouldTrimWhitespace()
+    {
+        // Arrange
+        var definition = new SyncDefinition { IncludeColumns = " Title , ClassA " };
+
+        // Act
+        var result = definition.GetIncludeColumnList();
+
+        // Assert
+        Assert.Equal(2, result.Count);
+        Assert.Equal("Title", result[0]);
+        Assert.Equal("ClassA", result[1]);
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
@@ -163,6 +178,10 @@ public class SyncDefinitionTests
         Assert.Equal("ClassA", definition.SyncKeyColumns);
         Assert.Equal(string.Empty, definition.IncludeColumns);
         Assert.Equal(string.Empty, definition.ExcludeColumns);
+        Assert.Null(definition.RecordFilterInclude);
+        Assert.Null(definition.RecordFilterExclude);
+        Assert.False(definition.AttachmentsEnabled);
+        Assert.Equal("Rds", definition.AttachmentsStorageType);
         Assert.Empty(definition.TargetMappings);
     }
 }

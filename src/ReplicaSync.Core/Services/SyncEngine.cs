@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using ReplicaSync.Core.Enums;
 using ReplicaSync.Core.Interfaces;
@@ -72,7 +72,7 @@ public class SyncEngine : ISyncEngine
             var targetColumnsMap = new Dictionary<int, IReadOnlyList<string>>();
             foreach (var targetMapping in definition.TargetMappings)
             {
-                var effectiveColumns = SyncRuleEngine.GetEffectiveColumns(definition, targetMapping);
+                var effectiveColumns = SyncRuleEngine.GetEffectiveColumns(definition, targetMapping, referenceType);
                 targetColumnsMap[targetMapping.Id] = effectiveColumns;
                 foreach (var col in effectiveColumns)
                 {

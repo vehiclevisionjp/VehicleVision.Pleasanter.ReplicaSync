@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ReplicaSync.Core.Models;
 
@@ -38,4 +38,12 @@ public class SyncTargetMapping
     /// <summary>Gets or sets columns excluded for this specific target (comma-separated).</summary>
     [MaxLength(2000)]
     public string TargetExcludeColumns { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the record filter include override for this target as JSON.</summary>
+    [MaxLength(4000)]
+    public string? RecordFilterIncludeOverride { get; set; }
+
+    /// <summary>Gets or sets the record filter exclude override for this target as JSON.</summary>
+    [MaxLength(4000)]
+    public string? RecordFilterExcludeOverride { get; set; }
 }

@@ -39,9 +39,16 @@ ReplicaSync.Core.Tests/
 ├── ReplicaSync.Core.Tests.csproj
 ├── Models/
 │   ├── PleasanterRecordTests.cs
-│   └── SyncDefinitionTests.cs
+│   ├── SyncDefinitionTests.cs
+│   └── SyncTargetMappingTests.cs
 └── Services/
     └── SyncRuleEngineTests.cs
+
+ReplicaSync.Infrastructure.Tests/
+├── ReplicaSync.Infrastructure.Tests.csproj
+└── Pleasanter/
+    └── SqlGenerators/
+        └── SqlGeneratorTests.cs
 ```
 
 ---

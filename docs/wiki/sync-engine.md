@@ -5,17 +5,21 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [同期処理フロー](#同期処理フロー)
-- [競合解決戦略](#競合解決戦略)
+- [同期エンジン](#同期エンジン)
+  - [同期処理フロー](#同期処理フロー)
+  - [競合解決戦略](#競合解決戦略)
     - [SourceWins](#sourcewins)
     - [LastWriteWins](#lastwritewins)
     - [ManualResolution](#manualresolution)
-- [ルールエンジン](#ルールエンジン)
+    - [FieldLevelMerge](#fieldlevelmerge)
+  - [ルールエンジン](#ルールエンジン)
     - [カラム決定の優先順位](#カラム決定の優先順位)
     - [対象カラム](#対象カラム)
-- [変更検出](#変更検出)
-- [同期ログ](#同期ログ)
-- [エラーハンドリング](#エラーハンドリング)
+      - [Results / Issues](#results--issues)
+      - [Wikis](#wikis)
+  - [変更検出](#変更検出)
+  - [同期ログ](#同期ログ)
+  - [エラーハンドリング](#エラーハンドリング)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -68,6 +72,16 @@ Target: ClassA = "大阪" (UpdatedTime: 10:05)
 → 結果: 同期スキップ、ログに Conflict として記録
 ```
 
+### FieldLevelMerge
+
+各カラムの最終更新日時を比較し、フィールド単位でマージします。ソースの方が新しいカラムのみターゲットに反映されます。
+
+```text
+Source: ClassA = "東京" (10:00), ClassB = "営業" (10:05)
+Target: ClassA = "大阪" (10:03), ClassB = "開発" (09:50)
+→ 結果: ClassA = "大阪"（ターゲットが新しい）, ClassB = "営業"（ソースが新しい）
+```
+
 ## ルールエンジン
 
 `SyncRuleEngine` は同期対象カラムの決定ロジックを提供します。
@@ -81,7 +95,9 @@ Target: ClassA = "大阪" (UpdatedTime: 10:05)
 
 ### 対象カラム
 
-Pleasanter の標準データカラムを同期対象として扱います。
+Pleasanter の標準データカラムを同期対象として扱います。Results / Issues と Wikis でカラム構成が異なります。
+
+#### Results / Issues
 
 | 種別 | カラム名                         |
 | ---- | -------------------------------- |
@@ -90,6 +106,15 @@ Pleasanter の標準データカラムを同期対象として扱います。
 | 数値 | `NumA` ～ `NumZ`                 |
 | 日付 | `DateA` ～ `DateZ`               |
 | 説明 | `DescriptionA` ～ `DescriptionZ` |
+
+#### Wikis
+
+Wikis テーブルは Class / Num / Date / Description カラムを持ちません。
+
+| 種別   | カラム名            |
+| ------ | ------------------- |
+| 基本   | `Title`、`Body`     |
+| ロック | `Locked`（自動同期）|
 
 ## 変更検出
 

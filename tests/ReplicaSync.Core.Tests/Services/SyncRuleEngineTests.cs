@@ -1,3 +1,4 @@
+﻿using ReplicaSync.Core.Enums;
 using ReplicaSync.Core.Models;
 using ReplicaSync.Core.Services;
 
@@ -269,5 +270,194 @@ public class SyncRuleEngineTests
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() =>
             SyncRuleEngine.FilterRecordColumns(sourceRecord, null!));
+    }
+
+    [Fact]
+    public void GetWikiDataColumnsShouldReturnOnlyTitleAndBody()
+    {
+        // Arrange & Act
+        var columns = SyncRuleEngine.GetWikiDataColumns();
+
+        // Assert
+        Assert.Equal(2, columns.Count);
+        Assert.Equal("Title", columns[0]);
+        Assert.Equal("Body", columns[1]);
+    }
+
+    [Fact]
+    public void GetEffectiveColumnsShouldReturnWikiColumnsForWikisReferenceType()
+    {
+        // Arrange
+        var definition = CreateDefinition();
+        var targetMapping = CreateTargetMapping();
+
+        // Act
+        var result = SyncRuleEngine.GetEffectiveColumns(definition, targetMapping, ReferenceType.Wikis);
+
+        // Assert
+        Assert.Equal(2, result.Count);
+        Assert.Contains("Title", result);
+        Assert.Contains("Body", result);
+    }
+
+    [Fact]
+    public void GetEffectiveColumnsShouldApplyExcludesToWikiColumns()
+    {
+        // Arrange
+        var definition = CreateDefinition(excludeColumns: "Body");
+        var targetMapping = CreateTargetMapping();
+
+        // Act
+        var result = SyncRuleEngine.GetEffectiveColumns(definition, targetMapping, ReferenceType.Wikis);
+
+        // Assert
+        Assert.Single(result);
+        Assert.Contains("Title", result);
+    }
+
+    [Fact]
+    public void FilterRecordColumnsShouldPreserveLockedField()
+    {
+        // Arrange
+        var sourceRecord = new PleasanterRecord
+        {
+            Title = "Wiki Title",
+            Body = "Wiki Body",
+            Locked = true,
+        };
+        var effectiveColumns = new List<string> { "Title", "Body" }.AsReadOnly();
+
+        // Act
+        var result = SyncRuleEngine.FilterRecordColumns(sourceRecord, effectiveColumns);
+
+        // Assert
+        Assert.True(result.Locked);
+    }
+
+    [Fact]
+    public void GetEffectiveColumnsShouldReturnAllColumnsForIssuesReferenceType()
+    {
+        // Arrange
+        var definition = CreateDefinition();
+        var targetMapping = CreateTargetMapping();
+
+        // Act
+        var result = SyncRuleEngine.GetEffectiveColumns(definition, targetMapping, ReferenceType.Issues);
+
+        // Assert
+        Assert.Equal(ExpectedTotalDataColumnCount, result.Count);
+    }
+
+    [Fact]
+    public void GetEffectiveColumnsShouldDefaultToResultsReferenceType()
+    {
+        // Arrange
+        var definition = CreateDefinition();
+        var targetMapping = CreateTargetMapping();
+
+        // Act — call without referenceType (should default to Results)
+        var withDefault = SyncRuleEngine.GetEffectiveColumns(definition, targetMapping);
+        var withExplicit = SyncRuleEngine.GetEffectiveColumns(definition, targetMapping, ReferenceType.Results);
+
+        // Assert
+        Assert.Equal(withExplicit.Count, withDefault.Count);
+    }
+
+    [Fact]
+    public void GetEffectiveColumnsShouldIgnoreNonWikiColumnsInIncludeForWikis()
+    {
+        // Arrange — include columns that don't exist in Wikis (ClassA, NumB)
+        var definition = CreateDefinition(includeColumns: "Title,ClassA,NumB");
+        var targetMapping = CreateTargetMapping();
+
+        // Act
+        var result = SyncRuleEngine.GetEffectiveColumns(definition, targetMapping, ReferenceType.Wikis);
+
+        // Assert — IncludeColumns overrides the full column set, so ClassA/NumB pass through
+        Assert.Equal(3, result.Count);
+        Assert.Contains("Title", result);
+        Assert.Contains("ClassA", result);
+        Assert.Contains("NumB", result);
+    }
+
+    [Fact]
+    public void GetEffectiveColumnsShouldApplyTargetExcludesToWikiColumns()
+    {
+        // Arrange
+        var definition = CreateDefinition();
+        var targetMapping = CreateTargetMapping(targetExcludeColumns: "Title");
+
+        // Act
+        var result = SyncRuleEngine.GetEffectiveColumns(definition, targetMapping, ReferenceType.Wikis);
+
+        // Assert
+        Assert.Single(result);
+        Assert.Contains("Body", result);
+    }
+
+    [Fact]
+    public void FilterRecordColumnsShouldPreserveIsDeletedTrue()
+    {
+        // Arrange
+        var sourceRecord = new PleasanterRecord
+        {
+            RecordId = 1,
+            IsDeleted = true,
+        };
+        var effectiveColumns = new List<string> { "Title" }.AsReadOnly();
+
+        // Act
+        var result = SyncRuleEngine.FilterRecordColumns(sourceRecord, effectiveColumns);
+
+        // Assert
+        Assert.True(result.IsDeleted);
+    }
+
+    [Fact]
+    public void FilterRecordColumnsShouldPreserveLockedFalse()
+    {
+        // Arrange
+        var sourceRecord = new PleasanterRecord
+        {
+            Title = "Test",
+            Locked = false,
+        };
+        var effectiveColumns = new List<string> { "Title" }.AsReadOnly();
+
+        // Act
+        var result = SyncRuleEngine.FilterRecordColumns(sourceRecord, effectiveColumns);
+
+        // Assert
+        Assert.False(result.Locked);
+    }
+
+    [Fact]
+    public void GetAllPleasanterDataColumnsShouldContainExpectedColumns()
+    {
+        // Arrange & Act
+        var columns = SyncRuleEngine.GetAllPleasanterDataColumns();
+
+        // Assert
+        Assert.Contains("ClassA", columns);
+        Assert.Contains("ClassZ", columns);
+        Assert.Contains("NumA", columns);
+        Assert.Contains("NumZ", columns);
+        Assert.Contains("DateA", columns);
+        Assert.Contains("DateZ", columns);
+        Assert.Contains("DescriptionA", columns);
+        Assert.Contains("DescriptionZ", columns);
+    }
+
+    [Fact]
+    public void GetWikiDataColumnsShouldNotContainClassNumDateDescription()
+    {
+        // Arrange & Act
+        var columns = SyncRuleEngine.GetWikiDataColumns();
+
+        // Assert
+        Assert.DoesNotContain("ClassA", columns);
+        Assert.DoesNotContain("NumA", columns);
+        Assert.DoesNotContain("DateA", columns);
+        Assert.DoesNotContain("DescriptionA", columns);
     }
 }
