@@ -80,6 +80,15 @@
         <member name="M:VehicleVision.Pleasanter.ReplicaSync.Core.Interfaces.IAppUserRepository.AnyUsersExistAsync(System.Threading.CancellationToken)">
             <summary>Checks whether any users exist in the database.</summary>
         </member>
+        <member name="M:VehicleVision.Pleasanter.ReplicaSync.Core.Interfaces.IAppUserRepository.RecordFailedLoginAsync(System.Int32,System.Threading.CancellationToken)">
+            <summary>Records a failed login attempt for the specified user.</summary>
+        </member>
+        <member name="M:VehicleVision.Pleasanter.ReplicaSync.Core.Interfaces.IAppUserRepository.ResetFailedLoginCountAsync(System.Int32,System.Threading.CancellationToken)">
+            <summary>Resets the failed login count and lockout for the specified user.</summary>
+        </member>
+        <member name="M:VehicleVision.Pleasanter.ReplicaSync.Core.Interfaces.IAppUserRepository.LockoutUserAsync(System.Int32,System.DateTime,System.Threading.CancellationToken)">
+            <summary>Locks out the specified user until the given UTC time.</summary>
+        </member>
         <member name="T:VehicleVision.Pleasanter.ReplicaSync.Core.Interfaces.IPleasanterDbAccess">
             <summary>
             Interface for direct database access to Pleasanter tables.
@@ -229,11 +238,22 @@
         <member name="P:VehicleVision.Pleasanter.ReplicaSync.Core.Models.AppUser.MustChangePassword">
             <summary>Gets or sets whether the user must change their password at next login.</summary>
         </member>
+        <member name="P:VehicleVision.Pleasanter.ReplicaSync.Core.Models.AppUser.FailedLoginCount">
+            <summary>Gets or sets the number of consecutive failed login attempts.</summary>
+        </member>
+        <member name="P:VehicleVision.Pleasanter.ReplicaSync.Core.Models.AppUser.LockoutEndUtc">
+            <summary>Gets or sets the UTC time until which the account is locked out. Null if not locked.</summary>
+        </member>
         <member name="P:VehicleVision.Pleasanter.ReplicaSync.Core.Models.AppUser.CreatedAt">
             <summary>Gets or sets the creation timestamp.</summary>
         </member>
         <member name="P:VehicleVision.Pleasanter.ReplicaSync.Core.Models.AppUser.UpdatedAt">
             <summary>Gets or sets the last update timestamp.</summary>
+        </member>
+        <member name="P:VehicleVision.Pleasanter.ReplicaSync.Core.Models.AppUser.IsLockedOut">
+            <summary>
+            Returns whether the account is currently locked out.
+            </summary>
         </member>
         <member name="T:VehicleVision.Pleasanter.ReplicaSync.Core.Models.PleasanterRecord">
             <summary>

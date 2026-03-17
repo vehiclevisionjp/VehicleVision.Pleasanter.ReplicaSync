@@ -23,6 +23,7 @@
     - [ユーザー認証（Cookie 認証）](#ユーザー認証cookie-認証)
     - [API キー認証](#api-キー認証)
     - [IP アドレス制限](#ip-アドレス制限)
+    - [アカウントロックアウト](#アカウントロックアウト)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -200,6 +201,11 @@ logs/
                 "Key": "<APIキー>"
             }
         ],
+        "AccountLockout": {
+            "Enabled": true,
+            "MaxFailedAttempts": 5,
+            "LockoutDurationMinutes": 15
+        },
         "IpWhitelist": {
             "Enabled": false,
             "AllowedAddresses": ["127.0.0.1", "::1"]
@@ -272,3 +278,32 @@ CIDR 表記に対応しているため、サブネット単位での制限が可
 ```
 
 > **注意**: `Enabled` が `false` の場合、IP 制限は適用されません。本番環境では `true` に設定し、必要な IP アドレスのみを許可することを推奨します。
+
+### アカウントロックアウト
+
+`AccountLockout` セクションでログイン失敗時のアカウントロックアウトを設定します。ブルートフォース攻撃への対策として機能します。
+
+| 設定項目                 | 型     | 既定値 | 説明                                 |
+| ------------------------ | ------ | ------ | ------------------------------------ |
+| `Enabled`                | `bool` | `true` | アカウントロックアウトを有効にするか |
+| `MaxFailedAttempts`      | `int`  | `5`    | ロックアウトまでの連続失敗回数       |
+| `LockoutDurationMinutes` | `int`  | `15`   | ロックアウト期間（分）               |
+
+```json
+{
+    "AccountLockout": {
+        "Enabled": true,
+        "MaxFailedAttempts": 5,
+        "LockoutDurationMinutes": 15
+    }
+}
+```
+
+**動作:**
+
+- ログイン失敗が `MaxFailedAttempts` 回連続すると、アカウントが `LockoutDurationMinutes` 分間ロックされます
+- ロックアウト中はパスワードが正しくてもログインできません
+- ロックアウト期間が経過すると自動的に解除されます
+- ログイン成功時に失敗カウントはリセットされます
+
+> **注意**: `Enabled` が `true`（既定値）の場合、アカウントロックアウトが有効になります。

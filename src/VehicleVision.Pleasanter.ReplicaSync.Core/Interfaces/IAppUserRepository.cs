@@ -1,4 +1,4 @@
-using VehicleVision.Pleasanter.ReplicaSync.Core.Models;
+﻿using VehicleVision.Pleasanter.ReplicaSync.Core.Models;
 
 namespace VehicleVision.Pleasanter.ReplicaSync.Core.Interfaces;
 
@@ -27,4 +27,13 @@ public interface IAppUserRepository
 
     /// <summary>Checks whether any users exist in the database.</summary>
     Task<bool> AnyUsersExistAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>Records a failed login attempt for the specified user.</summary>
+    Task RecordFailedLoginAsync(int userId, CancellationToken cancellationToken = default);
+
+    /// <summary>Resets the failed login count and lockout for the specified user.</summary>
+    Task ResetFailedLoginCountAsync(int userId, CancellationToken cancellationToken = default);
+
+    /// <summary>Locks out the specified user until the given UTC time.</summary>
+    Task LockoutUserAsync(int userId, DateTime lockoutEndUtc, CancellationToken cancellationToken = default);
 }

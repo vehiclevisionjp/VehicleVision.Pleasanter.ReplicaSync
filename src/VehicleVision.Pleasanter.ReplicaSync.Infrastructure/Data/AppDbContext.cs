@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using VehicleVision.Pleasanter.ReplicaSync.Core.Models;
 
 namespace VehicleVision.Pleasanter.ReplicaSync.Infrastructure.Data;
@@ -109,6 +109,8 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Username).IsRequired().HasMaxLength(100);
             entity.Property(e => e.PasswordHash).IsRequired();
             entity.Property(e => e.Role).HasConversion<string>().HasMaxLength(50);
+            entity.Property(e => e.FailedLoginCount).HasDefaultValue(0);
+            entity.Property(e => e.LockoutEndUtc);
         });
 
         modelBuilder.Entity<RecordVersionHistory>(entity =>

@@ -616,6 +616,9 @@
         <member name="P:VehicleVision.Pleasanter.ReplicaSync.Web.Security.SecuritySettings.IpWhitelist">
             <summary>Gets or sets the IP whitelist settings.</summary>
         </member>
+        <member name="P:VehicleVision.Pleasanter.ReplicaSync.Web.Security.SecuritySettings.AccountLockout">
+            <summary>Gets or sets the account lockout settings.</summary>
+        </member>
         <member name="P:VehicleVision.Pleasanter.ReplicaSync.Web.Security.SecuritySettings.InitialAdminUsername">
             <summary>Gets or sets the initial admin username (for first-run seeding only).</summary>
         </member>
@@ -632,6 +635,20 @@
         </member>
         <member name="P:VehicleVision.Pleasanter.ReplicaSync.Web.Security.ApiKeyEntry.Key">
             <summary>Gets or sets the API key value.</summary>
+        </member>
+        <member name="T:VehicleVision.Pleasanter.ReplicaSync.Web.Security.AccountLockoutSettings">
+            <summary>
+            Account lockout configuration for brute-force protection.
+            </summary>
+        </member>
+        <member name="P:VehicleVision.Pleasanter.ReplicaSync.Web.Security.AccountLockoutSettings.Enabled">
+            <summary>Gets or sets whether account lockout is enabled.</summary>
+        </member>
+        <member name="P:VehicleVision.Pleasanter.ReplicaSync.Web.Security.AccountLockoutSettings.MaxFailedAttempts">
+            <summary>Gets or sets the number of consecutive failed login attempts before lockout.</summary>
+        </member>
+        <member name="P:VehicleVision.Pleasanter.ReplicaSync.Web.Security.AccountLockoutSettings.LockoutDurationMinutes">
+            <summary>Gets or sets the lockout duration in minutes.</summary>
         </member>
         <member name="T:VehicleVision.Pleasanter.ReplicaSync.Web.Security.IpWhitelistSettings">
             <summary>

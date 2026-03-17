@@ -1,4 +1,4 @@
-using VehicleVision.Pleasanter.ReplicaSync.Core.Enums;
+﻿using VehicleVision.Pleasanter.ReplicaSync.Core.Enums;
 using VehicleVision.Pleasanter.ReplicaSync.Core.Models;
 
 namespace VehicleVision.Pleasanter.ReplicaSync.Core.Tests.Models;
@@ -40,5 +40,38 @@ public class AppUserTests
         Assert.Equal(string.Empty, user.PasswordHash);
         Assert.Equal(AppRole.User, user.Role);
         Assert.False(user.MustChangePassword);
+        Assert.Equal(0, user.FailedLoginCount);
+        Assert.Null(user.LockoutEndUtc);
+        Assert.False(user.IsLockedOut);
+    }
+
+    [Fact]
+    public void IsLockedOutShouldReturnTrueWhenLockoutEndIsInFuture()
+    {
+        // Arrange
+        var user = new AppUser { LockoutEndUtc = DateTime.UtcNow.AddMinutes(10) };
+
+        // Act & Assert
+        Assert.True(user.IsLockedOut);
+    }
+
+    [Fact]
+    public void IsLockedOutShouldReturnFalseWhenLockoutEndIsInPast()
+    {
+        // Arrange
+        var user = new AppUser { LockoutEndUtc = DateTime.UtcNow.AddMinutes(-1) };
+
+        // Act & Assert
+        Assert.False(user.IsLockedOut);
+    }
+
+    [Fact]
+    public void IsLockedOutShouldReturnFalseWhenLockoutEndIsNull()
+    {
+        // Arrange
+        var user = new AppUser { LockoutEndUtc = null };
+
+        // Act & Assert
+        Assert.False(user.IsLockedOut);
     }
 }

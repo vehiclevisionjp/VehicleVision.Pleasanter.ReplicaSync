@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using VehicleVision.Pleasanter.ReplicaSync.Core.Interfaces;
 using VehicleVision.Pleasanter.ReplicaSync.Core.Models;
 using VehicleVision.Pleasanter.ReplicaSync.Infrastructure.Data;
@@ -91,5 +91,51 @@ public class AppUserRepository : IAppUserRepository
         return await _context.AppUsers
             .AnyAsync(cancellationToken)
             .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task RecordFailedLoginAsync(int userId, CancellationToken cancellationToken = default)
+    {
+        var user = await _context.AppUsers
+            .FindAsync([userId], cancellationToken)
+            .ConfigureAwait(false);
+
+        if (user is not null)
+        {
+            user.FailedLoginCount++;
+            user.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task ResetFailedLoginCountAsync(int userId, CancellationToken cancellationToken = default)
+    {
+        var user = await _context.AppUsers
+            .FindAsync([userId], cancellationToken)
+            .ConfigureAwait(false);
+
+        if (user is not null)
+        {
+            user.FailedLoginCount = 0;
+            user.LockoutEndUtc = null;
+            user.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task LockoutUserAsync(int userId, DateTime lockoutEndUtc, CancellationToken cancellationToken = default)
+    {
+        var user = await _context.AppUsers
+            .FindAsync([userId], cancellationToken)
+            .ConfigureAwait(false);
+
+        if (user is not null)
+        {
+            user.LockoutEndUtc = lockoutEndUtc;
+            user.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
     }
 }

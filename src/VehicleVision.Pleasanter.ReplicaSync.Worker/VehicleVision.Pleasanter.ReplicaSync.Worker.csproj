@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>true</IsPackable>
     <UserSecretsId>dotnet-VehicleVision.Pleasanter.ReplicaSync.Worker-ea525de6-1209-40d2-9be5-575363640638</UserSecretsId>
   </PropertyGroup>
 
