@@ -75,11 +75,54 @@ function getMarkdownFiles(dir, basePath = '') {
 }
 
 /**
+ * docs/wiki/ 配下のアセットファイル（画像等）を再帰的に取得
+ */
+function getAssetFiles(dir, basePath = '') {
+  const files = [];
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    const relativePath = path.join(basePath, entry.name);
+
+    if (entry.isDirectory()) {
+      files.push(...getAssetFiles(fullPath, relativePath));
+    } else if (entry.isFile() && !entry.name.endsWith('.md')) {
+      files.push({
+        filePath: fullPath,
+        relativePath: relativePath,
+      });
+    }
+  }
+
+  return files;
+}
+
+/**
  * ファイルパスから Wiki ページタイトルを生成
  */
-function getWikiTitle(relativePath) {
-  const nameWithoutExt = relativePath.replace(/\.md$/, '');
-  return nameWithoutExt.replace(/\//g, '-');
+/**
+ * Markdown コンテンツ内の相対 .md リンクを Wiki 用に変換
+ * - `[text](page.md)` → `[text](page)`
+ * - `[text](page.md#anchor)` → `[text](page#anchor)`
+ * - 外部 URL (http/https) や画像リンク (images/) はそのまま
+ */
+function convertLinksForWiki(content) {
+  return content.replace(
+    /\[([^\]]*)\]\(([^)]+)\)/g,
+    (match, text, href) => {
+      // 外部 URL はそのまま
+      if (/^https?:\/\//.test(href)) {
+        return match;
+      }
+      // .md 拡張子を除去（アンカー付きも対応）
+      const converted = href.replace(/\.md(#|$)/, '$1');
+      if (converted === href) {
+        return match;
+      }
+      return `[${text}](${converted})`;
+    }
+  );
 }
 
 /**
@@ -233,7 +276,24 @@ function main() {
 
     for (const file of files) {
       const content = fs.readFileSync(file.filePath, 'utf-8');
-      createOrUpdateWikiPage(file.wikiTitle, content, wikiDir);
+      const wikiContent = convertLinksForWiki(content);
+      createOrUpdateWikiPage(file.wikiTitle, wikiContent, wikiDir);
+    }
+
+    // アセットファイル（画像等）を同期
+    const assets = getAssetFiles(DOCS_DIR);
+    if (assets.length > 0) {
+      console.log(`\n🖼️  ${assets.length} 個のアセットファイルを同期中...\n`);
+      for (const asset of assets) {
+        const destPath = path.join(wikiDir, asset.relativePath);
+        const destDir = path.dirname(destPath);
+        if (!fs.existsSync(destDir)) {
+          fs.mkdirSync(destDir, { recursive: true });
+        }
+        fs.copyFileSync(asset.filePath, destPath);
+        execSync(`cd "${wikiDir}" && git add "${asset.relativePath}"`, { stdio: 'pipe' });
+        console.log(`✅ アセット: ${asset.relativePath}`);
+      }
     }
 
     const sidebarContent = `# 目次

@@ -72,7 +72,7 @@ dotnet --version
 
 ### インストール
 
-[Node.js 公式サイト](https://nodejs.org/)からLTS版をインストールする。
+[Node.js 公式サイト](https://nodejs.org/)から LTS 版（22.x 以上）をインストールする。
 
 ```bash
 node --version

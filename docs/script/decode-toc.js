@@ -95,7 +95,8 @@ files.forEach((filePath) => {
             if (hasH1Link) {
                 processedToc = processedToc.replace(h1LinkRegex, "");
                 // H1を削除した場合のみ、残りの項目のインデントを1レベル下げる
-                processedToc = processedToc.replace(/^    /gm, "");
+                // doctocは2スペースインデントで出力するため、2スペース除去
+                processedToc = processedToc.replace(/^  /gm, "");
             }
         }
 
