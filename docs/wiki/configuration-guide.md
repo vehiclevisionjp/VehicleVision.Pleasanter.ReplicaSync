@@ -151,8 +151,8 @@ ExcludeColumns:  DescriptionZ
 
 各プロジェクトのルートに `nlog.config` を配置しています。
 
-- `src/ReplicaSync.Worker/nlog.config` — Worker サービス用
-- `src/ReplicaSync.Web/nlog.config` — Web UI 用
+- `src/VehicleVision.Pleasanter.ReplicaSync.Worker/nlog.config` — Worker サービス用
+- `src/VehicleVision.Pleasanter.ReplicaSync.Web/nlog.config` — Web UI 用
 
 ### 出力先（ターゲット）
 

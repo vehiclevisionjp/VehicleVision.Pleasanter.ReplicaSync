@@ -1,6 +1,6 @@
 # Web UI 取扱説明書
 
-ReplicaSync Web 管理画面の操作方法について説明します。
+VehicleVision.Pleasanter.ReplicaSync.Web 管理画面の操作方法について説明します。
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -50,7 +50,7 @@ ReplicaSync Web 管理画面の操作方法について説明します。
 
 ## 概要
 
-ReplicaSync Web は、プリザンターインスタンス間のデータ同期を管理するための Web アプリケーションです。
+VehicleVision.Pleasanter.ReplicaSync.Web は、プリザンターインスタンス間のデータ同期を管理するための Web アプリケーションです。
 Blazor Server で構築されており、ブラウザから以下の操作を行えます。
 
 - ダッシュボードによる同期状況の確認
@@ -174,14 +174,14 @@ http://localhost:5069
 
 登録済みのインスタンスをテーブル形式で表示します。
 
-| カラム         | 説明                                                                  |
-| -------------- | --------------------------------------------------------------------- |
-| ID             | 内部ID（自動採番）                                                    |
-| インスタンスID | インスタンスの識別子（例: `headquarters`）                            |
-| 表示名         | 表示用の名称（例: 本社）                                              |
-| DBタイプ       | データベースの種類（`SqlServer` / `MySql` / `PostgreSql` / `Sqlite`） |
-| 作成日時       | レコードの作成日時                                                    |
-| 操作           | 編集・削除ボタン                                                      |
+| カラム         | 説明                                                       |
+| -------------- | ---------------------------------------------------------- |
+| ID             | 内部ID（自動採番）                                         |
+| インスタンスID | インスタンスの識別子（例: `headquarters`）                 |
+| 表示名         | 表示用の名称（例: 本社）                                   |
+| DBタイプ       | データベースの種類（`SqlServer` / `PostgreSql` / `MySql`） |
+| 作成日時       | レコードの作成日時                                         |
+| 操作           | 編集・削除ボタン                                           |
 
 ![インスタンス一覧](images/manual/03-instances-index.png)
 
@@ -193,12 +193,12 @@ http://localhost:5069
 
 #### 入力項目
 
-| 項目           | 必須 | 説明                                                                  |
-| -------------- | ---- | --------------------------------------------------------------------- |
-| インスタンスID | Yes  | 一意の識別子（例: `headquarters`）                                    |
-| 表示名         | Yes  | 表示用の名称（例: 本社）                                              |
-| DBタイプ       | Yes  | プルダウンから選択（`SqlServer` / `MySql` / `PostgreSql` / `Sqlite`） |
-| 接続文字列     | Yes  | データベースへの接続文字列（例: `Server=...;Database=...;`）          |
+| 項目           | 必須 | 説明                                                         |
+| -------------- | ---- | ------------------------------------------------------------ |
+| インスタンスID | Yes  | 一意の識別子（例: `headquarters`）                           |
+| 表示名         | Yes  | 表示用の名称（例: 本社）                                     |
+| DBタイプ       | Yes  | プルダウンから選択（`SqlServer` / `PostgreSql` / `MySql`）   |
+| 接続文字列     | Yes  | データベースへの接続文字列（例: `Server=...;Database=...;`） |
 
 #### 操作ボタン
 
@@ -241,7 +241,7 @@ http://localhost:5069
 | ------------ | ----------------------------------------- |
 | 同期ID       | 同期定義の識別子（例: `master-employee`） |
 | 説明         | 同期内容の説明                            |
-| トポロジー   | 同期方式（`OneWay` / `BiDirectional`）    |
+| トポロジー   | 同期方式（`HubSpoke` / `PeerToPeer`）     |
 | ソース       | ソースインスタンスの表示名                |
 | ターゲット数 | ターゲットマッピングの数                  |
 | 有効         | 同期の有効/無効状態                       |
@@ -257,14 +257,14 @@ http://localhost:5069
 
 #### 基本情報
 
-| 項目           | 必須 | 説明                                                                                        |
-| -------------- | ---- | ------------------------------------------------------------------------------------------- |
-| 同期ID         | Yes  | 一意の識別子（例: `master-employee`）                                                       |
-| 説明           | No   | 同期内容の説明                                                                              |
-| トポロジー     | Yes  | `OneWay`（一方向）または `BiDirectional`（双方向）                                          |
-| 競合解決方式   | Yes  | `SourceWins`（ソース優先）/ `TargetWins`（ターゲット優先）/ `LastWriteWins`（最終更新優先） |
-| ポーリング間隔 | Yes  | 同期チェックの間隔（秒単位）                                                                |
-| 有効           | -    | チェックボックスで同期の有効/無効を切り替え                                                 |
+| 項目           | 必須 | 説明                                                                                                                                     |
+| -------------- | ---- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| 同期ID         | Yes  | 一意の識別子（例: `master-employee`）                                                                                                    |
+| 説明           | No   | 同期内容の説明                                                                                                                           |
+| トポロジー     | Yes  | `HubSpoke`（ハブ-スポーク）または `PeerToPeer`（ピアツーピア）                                                                           |
+| 競合解決方式   | Yes  | `SourceWins`（ソース優先）/ `LastWriteWins`（最終更新優先）/ `ManualResolution`（手動解決）/ `FieldLevelMerge`（フィールドレベルマージ） |
+| ポーリング間隔 | Yes  | 同期チェックの間隔（秒単位）                                                                                                             |
+| 有効           | -    | チェックボックスで同期の有効/無効を切り替え                                                                                              |
 
 #### ソース設定
 
@@ -483,19 +483,19 @@ http://localhost:5069
 1. Playwright のブラウザをインストールする
 
     ```bash
-    pwsh tests/ReplicaSync.Web.E2E/bin/Debug/net10.0/playwright.ps1 install chromium
+    pwsh tests/VehicleVision.Pleasanter.ReplicaSync.Web.E2E/bin/Debug/net10.0/playwright.ps1 install chromium
     ```
 
 2. Web アプリケーションを起動する
 
     ```bash
-    dotnet run --project src/ReplicaSync.Web
+    dotnet run --project src/VehicleVision.Pleasanter.ReplicaSync.Web
     ```
 
 3. スクリーンショット取得テストを実行する
 
     ```bash
-    dotnet test tests/ReplicaSync.Web.E2E
+    dotnet test tests/VehicleVision.Pleasanter.ReplicaSync.Web.E2E
     ```
 
 4. スクリーンショットは `docs/wiki/images/manual/` に保存される

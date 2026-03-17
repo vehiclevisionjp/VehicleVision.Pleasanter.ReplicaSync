@@ -100,7 +100,16 @@ function getAssetFiles(dir, basePath = '') {
 
 /**
  * ファイルパスから Wiki ページタイトルを生成
+ * - `.md` 拡張子を除去
+ * - パス区切り (`/`, `\`) を `-` に変換
+ * 例: `architecture-overview.md` → `architecture-overview`
  */
+function getWikiTitle(relativePath) {
+  return relativePath
+    .replace(/\.md$/, '')
+    .replace(/[\\/]/g, '-');
+}
+
 /**
  * Markdown コンテンツ内の相対 .md リンクを Wiki 用に変換
  * - `[text](page.md)` → `[text](page)`

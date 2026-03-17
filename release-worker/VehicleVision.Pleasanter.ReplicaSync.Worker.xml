@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>VehicleVision.Pleasanter.ReplicaSync.Worker</name>
+    </assembly>
+    <members>
+        <member name="T:VehicleVision.Pleasanter.ReplicaSync.Worker.SyncBackgroundService">
+            <summary>
+            Background service that continuously runs sync operations.
+            </summary>
+        </member>
+        <member name="M:VehicleVision.Pleasanter.ReplicaSync.Worker.SyncBackgroundService.#ctor(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory,Microsoft.Extensions.Logging.ILogger{VehicleVision.Pleasanter.ReplicaSync.Worker.SyncBackgroundService})">
+            <summary>
+            Initializes a new instance of the <see cref="T:VehicleVision.Pleasanter.ReplicaSync.Worker.SyncBackgroundService"/> class.
+            </summary>
+            <param name="scopeFactory">The service scope factory for creating DI scopes.</param>
+            <param name="logger">The logger instance.</param>
+        </member>
+        <member name="M:VehicleVision.Pleasanter.ReplicaSync.Worker.SyncBackgroundService.ExecuteAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

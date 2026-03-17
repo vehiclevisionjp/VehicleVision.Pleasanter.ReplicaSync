@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
@@ -36,4 +36,70 @@ jobs:
         run: dotnet build --no-restore --configuration Release
 
       - name: Test
-        run: dotnet test --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage"
+        run: dotnet test --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage" --filter "FullyQualifiedName!~E2E"
+
+  e2e-test:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: "Y"
+          MSSQL_SA_PASSWORD: "E2eTest!Pass123"
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'E2eTest!Pass123' -C -Q 'SELECT 1' || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+          --health-start-period 30s
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "10.x"
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Install Playwright browsers
+        run: pwsh tests/VehicleVision.Pleasanter.ReplicaSync.Web.E2E/bin/Release/net10.0/playwright.ps1 install --with-deps chromium
+
+      - name: Start Web application
+        env:
+          ASPNETCORE_URLS: "http://localhost:5069"
+          ASPNETCORE_ENVIRONMENT: "Development"
+          ConnectionStrings__ConfigDatabase: "Server=localhost;Database=ReplicaSync;User Id=sa;Password=E2eTest!Pass123;TrustServerCertificate=True"
+          ConfigDatabaseType: "SqlServer"
+        run: |
+          dotnet run --project src/VehicleVision.Pleasanter.ReplicaSync.Web --configuration Release --no-build &
+          echo "Waiting for Web application to start..."
+          for i in $(seq 1 30); do
+            if curl -s -o /dev/null -w '%{http_code}' http://localhost:5069/account/login | grep -q '200'; then
+              echo "Web application is ready."
+              break
+            fi
+            echo "Attempt $i/30..."
+            sleep 2
+          done
+
+      - name: Run E2E tests
+        run: dotnet test tests/VehicleVision.Pleasanter.ReplicaSync.Web.E2E --no-build --configuration Release --verbosity normal
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: e2e-screenshots
+          path: docs/wiki/images/manual/
+          if-no-files-found: ignore

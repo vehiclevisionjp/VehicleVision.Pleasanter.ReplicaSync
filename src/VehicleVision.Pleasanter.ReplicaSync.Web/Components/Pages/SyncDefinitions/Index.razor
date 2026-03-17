@@ -1,0 +1,148 @@
+@page "/sync-definitions"
+@using VehicleVision.Pleasanter.ReplicaSync.Core.Interfaces
+@using VehicleVision.Pleasanter.ReplicaSync.Core.Models
+@inject ISyncConfigRepository ConfigRepo
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>同期定義管理</PageTitle>
+
+<h1>同期定義管理</h1>
+
+<div class="mb-3">
+    <a href="sync-definitions/create" class="btn btn-primary">
+        <span class="bi bi-plus-circle" aria-hidden="true"></span> 新規作成
+    </a>
+</div>
+
+@if (_loading)
+{
+    <p><em>読み込み中...</em></p>
+}
+else if (_errorMessage is not null)
+{
+    <div class="alert alert-danger">@_errorMessage</div>
+}
+else if (_definitions.Count == 0)
+{
+    <div class="alert alert-info">同期定義が登録されていません。</div>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>同期ID</th>
+                <th>説明</th>
+                <th>トポロジー</th>
+                <th>ソース</th>
+                <th>ターゲット数</th>
+                <th>有効</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var def in _definitions)
+            {
+                <tr>
+                    <td>@def.SyncId</td>
+                    <td>@def.Description</td>
+                    <td><span class="badge bg-info">@def.Topology</span></td>
+                    <td>@(def.SourceInstance?.DisplayName ?? $"ID:{def.SourceInstanceId}")</td>
+                    <td>@def.TargetMappings.Count</td>
+                    <td>
+                        @if (def.IsEnabled)
+                        {
+                            <span class="badge bg-success">有効</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">無効</span>
+                        }
+                    </td>
+                    <td>
+                        <a href="sync-definitions/edit/@def.Id" class="btn btn-sm btn-outline-primary">編集</a>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="() => RequestDelete(def)">削除</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (_deleteConfirmDefinition is not null)
+{
+    <div class="modal d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">削除確認</h5>
+                    <button type="button" class="btn-close" @onclick="CancelDelete"></button>
+                </div>
+                <div class="modal-body">
+                    <p>同期定義「@_deleteConfirmDefinition.SyncId」を削除しますか？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CancelDelete">キャンセル</button>
+                    <button type="button" class="btn btn-danger" @onclick="ConfirmDeleteAsync">削除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool _loading = true;
+    private string? _errorMessage;
+    private IReadOnlyList<SyncDefinition> _definitions = [];
+    private SyncDefinition? _deleteConfirmDefinition;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDefinitionsAsync();
+    }
+
+    private async Task LoadDefinitionsAsync()
+    {
+        try
+        {
+            _definitions = await ConfigRepo.GetAllDefinitionsAsync();
+            _errorMessage = null;
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"データの読み込みに失敗しました: {ex.Message}";
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void RequestDelete(SyncDefinition definition)
+    {
+        _deleteConfirmDefinition = definition;
+    }
+
+    private void CancelDelete()
+    {
+        _deleteConfirmDefinition = null;
+    }
+
+    private async Task ConfirmDeleteAsync()
+    {
+        if (_deleteConfirmDefinition is null) return;
+
+        try
+        {
+            await ConfigRepo.DeleteDefinitionAsync(_deleteConfirmDefinition.Id);
+            _deleteConfirmDefinition = null;
+            await LoadDefinitionsAsync();
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"削除に失敗しました: {ex.Message}";
+            _deleteConfirmDefinition = null;
+        }
+    }
+}

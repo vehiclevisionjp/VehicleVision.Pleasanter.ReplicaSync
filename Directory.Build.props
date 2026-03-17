@@ -24,7 +24,7 @@
 
   <PropertyGroup>
     <!-- NuGet パッケージメタデータ -->
-    <Version>0.0.0</Version>
+    <Version>0.0.1</Version>
     <Authors>VehicleVision</Authors>
     <Company>VehicleVision</Company>
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
@@ -33,6 +33,10 @@
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <PropertyGroup>
     <!-- コンパイラ警告レベル -->

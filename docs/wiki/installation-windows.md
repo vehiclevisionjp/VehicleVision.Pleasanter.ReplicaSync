@@ -53,8 +53,8 @@
 
 [.NET 10 ダウンロードページ](https://dotnet.microsoft.com/download/dotnet/10.0) から以下をダウンロードします。
 
-- **ASP.NET Core Runtime 10.0.x** — Web UI（ReplicaSync.Web）の実行に必要
-- **.NET Runtime 10.0.x** — Worker サービス（ReplicaSync.Worker）の実行に必要
+- **ASP.NET Core Runtime 10.0.x** — Web UI（VehicleVision.Pleasanter.ReplicaSync.Web）の実行に必要
+- **.NET Runtime 10.0.x** — Worker サービス（VehicleVision.Pleasanter.ReplicaSync.Worker）の実行に必要
 
 > **ヒント**: 「Hosting Bundle」をインストールすると、ASP.NET Core Runtime と IIS モジュールがまとめてインストールされます。
 
@@ -89,12 +89,12 @@ git clone https://github.com/vehiclevisionjp/VehicleVision.Pleasanter.ReplicaSyn
 cd VehicleVision.Pleasanter.ReplicaSync
 
 # Web UI のビルド
-dotnet publish src\ReplicaSync.Web\ReplicaSync.Web.csproj `
+dotnet publish src\VehicleVision.Pleasanter.ReplicaSync.Web\ReplicaSync.Web.csproj `
   --configuration Release `
   --output .\publish\web
 
 # Worker サービスのビルド
-dotnet publish src\ReplicaSync.Worker\ReplicaSync.Worker.csproj `
+dotnet publish src\VehicleVision.Pleasanter.ReplicaSync.Worker\ReplicaSync.Worker.csproj `
   --configuration Release `
   --output .\publish\worker
 ```

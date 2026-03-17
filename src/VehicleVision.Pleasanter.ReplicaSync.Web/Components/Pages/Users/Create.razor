@@ -1,0 +1,130 @@
+@page "/users/create"
+@using Microsoft.AspNetCore.Authorization
+@using VehicleVision.Pleasanter.ReplicaSync.Core.Enums
+@using VehicleVision.Pleasanter.ReplicaSync.Core.Interfaces
+@using VehicleVision.Pleasanter.ReplicaSync.Core.Models
+@using VehicleVision.Pleasanter.ReplicaSync.Web.Security
+@attribute [Authorize(Policy = "AdminOnly")]
+@inject IAppUserRepository UserRepo
+@inject NavigationManager Navigation
+@inject ILogger<Create> Logger
+@rendermode InteractiveServer
+
+<PageTitle>ユーザー作成</PageTitle>
+
+<h1>ユーザー作成</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        @if (_errorMessage is not null)
+        {
+            <div class="alert alert-danger">@_errorMessage</div>
+        }
+
+        <form @onsubmit="HandleSubmitAsync">
+            <div class="mb-3">
+                <label for="username" class="form-label">ユーザー名</label>
+                <input type="text" class="form-control" id="username" @bind="_username" required maxlength="100"
+                       autocomplete="off" />
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">パスワード</label>
+                <input type="password" class="form-control" id="password" @bind="_password" required
+                       autocomplete="new-password" />
+            </div>
+
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">パスワード（確認）</label>
+                <input type="password" class="form-control" id="confirmPassword" @bind="_confirmPassword" required
+                       autocomplete="new-password" />
+            </div>
+
+            <div class="mb-3">
+                <label for="role" class="form-label">ロール</label>
+                <select id="role" class="form-select" @bind="_role">
+                    <option value="@AppRole.User">一般</option>
+                    <option value="@AppRole.Administrator">管理者</option>
+                </select>
+            </div>
+
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="mustChangePassword" @bind="_mustChangePassword" />
+                <label class="form-check-label" for="mustChangePassword">初回ログイン時にパスワード変更を強制</label>
+            </div>
+
+            <div class="mb-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary" disabled="@_submitting">
+                    @if (_submitting)
+                    {
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span>作成中...</span>
+                    }
+                    else
+                    {
+                        <span>作成</span>
+                    }
+                </button>
+                <a href="users" class="btn btn-secondary">キャンセル</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    private string _username = string.Empty;
+    private string _password = string.Empty;
+    private string _confirmPassword = string.Empty;
+    private AppRole _role = AppRole.User;
+    private bool _mustChangePassword = true;
+    private bool _submitting;
+    private string? _errorMessage;
+
+    private async Task HandleSubmitAsync()
+    {
+        _submitting = true;
+        _errorMessage = null;
+
+        try
+        {
+            if (_password != _confirmPassword)
+            {
+                _errorMessage = "パスワードが一致しません。";
+                return;
+            }
+
+            if (_password.Length < 8)
+            {
+                _errorMessage = "パスワードは8文字以上で入力してください。";
+                return;
+            }
+
+            var existing = await UserRepo.GetByUsernameAsync(_username);
+            if (existing is not null)
+            {
+                _errorMessage = $"ユーザー名「{_username}」は既に使用されています。";
+                return;
+            }
+
+            var user = new AppUser
+            {
+                Username = _username,
+                PasswordHash = PasswordHasher.HashPassword(_password),
+                Role = _role,
+                MustChangePassword = _mustChangePassword,
+            };
+
+            await UserRepo.CreateAsync(user);
+            Logger.LogInformation("ユーザー '{Username}' を作成しました（ロール: {Role}）。", user.Username, user.Role);
+            Navigation.NavigateTo("users");
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"作成に失敗しました: {ex.Message}";
+        }
+        finally
+        {
+            _submitting = false;
+        }
+    }
+}
