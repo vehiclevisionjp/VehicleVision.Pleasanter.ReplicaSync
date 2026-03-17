@@ -13,17 +13,16 @@ Hub-Spoke / Peer-to-Peer トポロジ、複数の競合解決戦略、マルチD
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [主な機能](#主な機能)
-- [セットアップ](#セットアップ)
+- [クイックスタート](#クイックスタート)
     - [前提条件](#前提条件)
-    - [クローン](#クローン)
-    - [ビルド](#ビルド)
-- [使用方法](#使用方法)
-    - [Worker サービスの起動](#worker-サービスの起動)
-    - [Web UI の起動](#web-ui-の起動)
+    - [インストール](#インストール)
+    - [設定](#設定)
+    - [起動](#起動)
 - [ドキュメント](#ドキュメント)
 - [NuGet パッケージ](#nuget-パッケージ)
 - [サードパーティライセンス](#サードパーティライセンス)
 - [セキュリティ](#セキュリティ)
+- [開発に参加する](#開発に参加する)
 - [謝辞](#謝辞)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -31,55 +30,47 @@ Hub-Spoke / Peer-to-Peer トポロジ、複数の競合解決戦略、マルチD
 ## 主な機能
 
 - **マルチトポロジ対応** - Hub-Spoke（親子）および Peer-to-Peer トポロジをサポート
-- **競合解決戦略** - SourceWins / LastWriteWins / ManualResolution の3つの戦略から選択
+- **競合解決戦略** - SourceWins / LastWriteWins / ManualResolution / FieldLevelMerge の4つの戦略から選択
 - **カラムレベル制御** - 同期対象カラムの Include / Exclude フィルタリング
 - **マルチDBMS** - SQL Server、PostgreSQL、MySQL の Pleasanter インスタンスおよび構成データベースに対応
 - **同期キー** - 任意のカラムをキーとしたレコードマッチング
 - **削除同期** - ソフトデリート追跡による削除レコードの同期
+- **バージョン履歴** - 上書き前のレコード状態をスナップショットとして自動保存
 - **監査ログ** - すべての同期操作を詳細に記録
-- **構造化ロギング** - NLog によるコンソール・デバッグコンソール・ファイル出力の統一
 - **Web UI** - Blazor Server ベースの管理画面でインスタンス・定義・ログを管理
+- **Web API** - API キー認証による REST API で外部システムとの連携が可能
 - **バックグラウンドサービス** - .NET Worker Service による継続的なポーリング同期
 
-## セットアップ
+## クイックスタート
 
 ### 前提条件
 
-- [.NET SDK 10.0](https://dotnet.microsoft.com/download) 以上
-- [Node.js](https://nodejs.org/) （ドキュメントのlint・フォーマット用、推奨）
-- [Git](https://git-scm.com/)
+- [.NET 10 ランタイム](https://dotnet.microsoft.com/download)（ASP.NET Core Runtime 含む）
+- SQL Server / PostgreSQL / MySQL のいずれか（構成データベース用）
+- 同期対象の Pleasanter インスタンスのデータベースへの接続
 
-### クローン
+### インストール
 
-```bash
-git clone https://github.com/vehiclevisionjp/VehicleVision.Pleasanter.ReplicaSync.git
-cd VehicleVision.Pleasanter.ReplicaSync
-```
-
-### ビルド
+NuGet パッケージを使用して、最も簡単にセットアップできます。
 
 ```bash
-dotnet restore
-dotnet build
+# Web UI（管理画面）
+dotnet new web -n ReplicaSyncWeb
+cd ReplicaSyncWeb
+dotnet add package ReplicaSync.Web
+
+# Worker サービス（同期実行）
+cd ..
+dotnet new worker -n ReplicaSyncWorker
+cd ReplicaSyncWorker
+dotnet add package ReplicaSync.Worker
 ```
 
-#### ドキュメントツールのセットアップ（任意）
+詳細な手順は[インストールガイド](docs/wiki/Home.md#インストールガイド)を参照してください。
 
-```bash
-npm install
-```
+### 設定
 
-## 使用方法
-
-### Worker サービスの起動
-
-バックグラウンドで同期処理を実行する Worker サービスを起動します。
-
-```bash
-dotnet run --project src/ReplicaSync.Worker
-```
-
-`appsettings.json` で構成データベースの接続先を設定できます。
+`appsettings.json` で構成データベースの接続先を設定します。
 
 ```json
 {
@@ -90,28 +81,42 @@ dotnet run --project src/ReplicaSync.Worker
 }
 ```
 
-`ConfigDatabaseType` には `SqlServer`、`PostgreSql` を指定できます。
+`ConfigDatabaseType` には `SqlServer`、`PostgreSql`、`MySql` を指定できます。
+詳細は[設定ガイド](docs/wiki/configuration-guide.md)を参照してください。
 
-### Web UI の起動
-
-同期インスタンス・定義・ログを管理するための Web UI を起動します。
+### 起動
 
 ```bash
-dotnet run --project src/ReplicaSync.Web
+# Web UI を起動（ブラウザで管理画面にアクセス）
+dotnet run --project ReplicaSyncWeb
+
+# Worker サービスを起動（バックグラウンド同期を実行）
+dotnet run --project ReplicaSyncWorker
 ```
 
-ブラウザで表示されるダッシュボードから、以下の操作が可能です：
+Web UI のダッシュボードから、以下の操作が可能です：
 
 - 同期インスタンスの登録・編集・削除
 - 同期定義の作成・有効化・無効化
 - 同期ログの確認
+- ユーザー管理（管理者のみ）
 
-詳細は [Wiki](docs/wiki/Home.md) を参照してください。
+操作方法の詳細は [Web UI 取扱説明書](docs/wiki/web-manual.md)を参照してください。
 
 ## ドキュメント
 
-- [Wiki](docs/wiki/Home.md) - 機能説明、アーキテクチャ、設定ガイド
-- [コントリビューションガイド](CONTRIBUTING.md) - 開発参加方法
+詳細なドキュメントは [Wiki](docs/wiki/Home.md) にまとめています。
+
+<!-- markdownlint-disable MD013 MD060 -->
+
+| カテゴリ     | ドキュメント                                                                                                                                                                  |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| インストール | [NuGet](docs/wiki/installation-nuget.md) / [Azure](docs/wiki/installation-azure.md) / [Windows](docs/wiki/installation-windows.md) / [Linux](docs/wiki/installation-linux.md) |
+| 設定         | [設定ガイド](docs/wiki/configuration-guide.md)                                                                                                                                |
+| 操作方法     | [Web UI 取扱説明書](docs/wiki/web-manual.md)                                                                                                                                  |
+| API          | [Web API リファレンス](docs/wiki/web-api-reference.md)                                                                                                                        |
+
+<!-- markdownlint-enable MD013 MD060 -->
 
 ## NuGet パッケージ
 
@@ -157,6 +162,10 @@ dotnet add package ReplicaSync.Worker
 ## セキュリティ
 
 セキュリティ上の脆弱性を発見された場合は、[セキュリティポリシー](.github/SECURITY.md)をご確認の上、ご報告ください。
+
+## 開発に参加する
+
+プロジェクトへの貢献を歓迎します。バグ報告、機能要望、プルリクエストについては[コントリビューションガイド](CONTRIBUTING.md)をご覧ください。
 
 ## 謝辞
 

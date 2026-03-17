@@ -91,7 +91,10 @@ VehicleVision.Pleasanter.ReplicaSync/
 │   │   └── Components/Pages/        # ダッシュボード等の画面
 │   └── ReplicaSync.Worker/          # バックグラウンド同期サービス
 ├── tests/
-│   └── ReplicaSync.Core.Tests/      # ユニットテスト
+│   ├── ReplicaSync.Core.Tests/      # Core ユニットテスト
+│   ├── ReplicaSync.Infrastructure.Tests/  # Infrastructure ユニットテスト
+│   ├── ReplicaSync.Web.Tests/       # Web ユニットテスト
+│   └── ReplicaSync.Web.E2E/         # E2E テスト（Playwright）
 ├── docs/
 │   ├── contributing/                # 開発者向けガイドライン
 │   ├── script/                      # ドキュメント用スクリプト
