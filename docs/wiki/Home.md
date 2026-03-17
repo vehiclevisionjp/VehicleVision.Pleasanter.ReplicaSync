@@ -6,11 +6,11 @@ VehicleVision.Pleasanter.ReplicaSync のドキュメントへようこそ。
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [利用者向けドキュメント](#利用者向けドキュメント)
-        - [インストールガイド](#インストールガイド)
-        - [設定・運用](#設定運用)
+    - [インストールガイド](#インストールガイド)
+    - [設定・運用](#設定運用)
 - [開発者向けドキュメント](#開発者向けドキュメント)
-        - [内部設計](#内部設計)
-        - [コントリビューション](#コントリビューション)
+    - [内部設計](#内部設計)
+    - [コントリビューション](#コントリビューション)
 - [関連リンク](#関連リンク)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
