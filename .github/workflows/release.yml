@@ -73,16 +73,16 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: Run tests
-        run: dotnet test --no-build --configuration Release --verbosity normal
+        run: dotnet test --no-build --configuration Release --verbosity normal --filter "FullyQualifiedName!~E2E"
 
       - name: Create NuGet package
         run: dotnet pack --configuration Release --no-build --output ./nupkg
 
       - name: Publish Web
-        run: dotnet publish src/ReplicaSync.Web/ReplicaSync.Web.csproj --configuration Release --no-build --output ./publish/web
+        run: dotnet publish src/VehicleVision.Pleasanter.ReplicaSync.Web/VehicleVision.Pleasanter.ReplicaSync.Web.csproj --configuration Release --no-build --output ./publish/web
 
       - name: Publish Worker
-        run: dotnet publish src/ReplicaSync.Worker/ReplicaSync.Worker.csproj --configuration Release --no-build --output ./publish/worker
+        run: dotnet publish src/VehicleVision.Pleasanter.ReplicaSync.Worker/VehicleVision.Pleasanter.ReplicaSync.Worker.csproj --configuration Release --no-build --output ./publish/worker
 
       - name: Create Release ZIP
         run: |

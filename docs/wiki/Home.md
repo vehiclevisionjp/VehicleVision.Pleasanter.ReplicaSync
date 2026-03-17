@@ -55,5 +55,5 @@ VehicleVision.Pleasanter.ReplicaSync のドキュメントへようこそ。
 ## 関連リンク
 
 - [README](https://github.com/vehiclevisionjp/VehicleVision.Pleasanter.ReplicaSync)
-- [NuGet パッケージ - ReplicaSync.Web](https://www.nuget.org/packages/ReplicaSync.Web)
-- [NuGet パッケージ - ReplicaSync.Worker](https://www.nuget.org/packages/ReplicaSync.Worker)
+- [NuGet パッケージ - VehicleVision.Pleasanter.ReplicaSync.Web](https://www.nuget.org/packages/VehicleVision.Pleasanter.ReplicaSync.Web)
+- [NuGet パッケージ - VehicleVision.Pleasanter.ReplicaSync.Worker](https://www.nuget.org/packages/VehicleVision.Pleasanter.ReplicaSync.Worker)

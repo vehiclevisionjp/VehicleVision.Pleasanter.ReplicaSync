@@ -1,14 +1,14 @@
 <Solution>
   <Folder Name="/src/">
-    <Project Path="src/ReplicaSync.Core/ReplicaSync.Core.csproj" />
-    <Project Path="src/ReplicaSync.Infrastructure/ReplicaSync.Infrastructure.csproj" />
-    <Project Path="src/ReplicaSync.Web/ReplicaSync.Web.csproj" />
-    <Project Path="src/ReplicaSync.Worker/ReplicaSync.Worker.csproj" />
+    <Project Path="src/VehicleVision.Pleasanter.ReplicaSync.Core/VehicleVision.Pleasanter.ReplicaSync.Core.csproj" />
+    <Project Path="src/VehicleVision.Pleasanter.ReplicaSync.Infrastructure/VehicleVision.Pleasanter.ReplicaSync.Infrastructure.csproj" />
+    <Project Path="src/VehicleVision.Pleasanter.ReplicaSync.Web/VehicleVision.Pleasanter.ReplicaSync.Web.csproj" />
+    <Project Path="src/VehicleVision.Pleasanter.ReplicaSync.Worker/VehicleVision.Pleasanter.ReplicaSync.Worker.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/ReplicaSync.Core.Tests/ReplicaSync.Core.Tests.csproj" />
-    <Project Path="tests/ReplicaSync.Infrastructure.Tests/ReplicaSync.Infrastructure.Tests.csproj" />
-    <Project Path="tests/ReplicaSync.Web.Tests/ReplicaSync.Web.Tests.csproj" />
-    <Project Path="tests/ReplicaSync.Web.E2E/ReplicaSync.Web.E2E.csproj" />
+    <Project Path="tests/VehicleVision.Pleasanter.ReplicaSync.Core.Tests/VehicleVision.Pleasanter.ReplicaSync.Core.Tests.csproj" />
+    <Project Path="tests/VehicleVision.Pleasanter.ReplicaSync.Infrastructure.Tests/VehicleVision.Pleasanter.ReplicaSync.Infrastructure.Tests.csproj" />
+    <Project Path="tests/VehicleVision.Pleasanter.ReplicaSync.Web.Tests/VehicleVision.Pleasanter.ReplicaSync.Web.Tests.csproj" />
+    <Project Path="tests/VehicleVision.Pleasanter.ReplicaSync.Web.E2E/VehicleVision.Pleasanter.ReplicaSync.Web.E2E.csproj" />
   </Folder>
 </Solution>

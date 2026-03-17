@@ -73,7 +73,7 @@ jobs:
         run: dotnet build --no-restore --configuration Release
 
       - name: Install Playwright browsers
-        run: pwsh tests/ReplicaSync.Web.E2E/bin/Release/net10.0/playwright.ps1 install --with-deps chromium
+        run: pwsh tests/VehicleVision.Pleasanter.ReplicaSync.Web.E2E/bin/Release/net10.0/playwright.ps1 install --with-deps chromium
 
       - name: Start Web application
         env:
@@ -82,7 +82,7 @@ jobs:
           ConnectionStrings__ConfigDatabase: "Server=localhost;Database=ReplicaSync;User Id=sa;Password=E2eTest!Pass123;TrustServerCertificate=True"
           ConfigDatabaseType: "SqlServer"
         run: |
-          dotnet run --project src/ReplicaSync.Web --configuration Release --no-build &
+          dotnet run --project src/VehicleVision.Pleasanter.ReplicaSync.Web --configuration Release --no-build &
           echo "Waiting for Web application to start..."
           for i in $(seq 1 30); do
             if curl -s -o /dev/null -w '%{http_code}' http://localhost:5069/account/login | grep -q '200'; then
@@ -94,7 +94,7 @@ jobs:
           done
 
       - name: Run E2E tests
-        run: dotnet test tests/ReplicaSync.Web.E2E --no-build --configuration Release --verbosity normal
+        run: dotnet test tests/VehicleVision.Pleasanter.ReplicaSync.Web.E2E --no-build --configuration Release --verbosity normal
 
       - name: Upload screenshots
         if: always()

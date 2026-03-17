@@ -112,12 +112,12 @@ git clone https://github.com/vehiclevisionjp/VehicleVision.Pleasanter.ReplicaSyn
 cd VehicleVision.Pleasanter.ReplicaSync
 
 # Web UI のビルド
-dotnet publish src/ReplicaSync.Web/ReplicaSync.Web.csproj \
+dotnet publish src/VehicleVision.Pleasanter.ReplicaSync.Web/ReplicaSync.Web.csproj \
   --configuration Release \
   --output ./publish/web
 
 # Worker サービスのビルド
-dotnet publish src/ReplicaSync.Worker/ReplicaSync.Worker.csproj \
+dotnet publish src/VehicleVision.Pleasanter.ReplicaSync.Worker/ReplicaSync.Worker.csproj \
   --configuration Release \
   --output ./publish/worker
 ```

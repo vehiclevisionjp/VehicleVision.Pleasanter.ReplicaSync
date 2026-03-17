@@ -483,19 +483,19 @@ http://localhost:5069
 1. Playwright のブラウザをインストールする
 
     ```bash
-    pwsh tests/ReplicaSync.Web.E2E/bin/Debug/net10.0/playwright.ps1 install chromium
+    pwsh tests/VehicleVision.Pleasanter.ReplicaSync.Web.E2E/bin/Debug/net10.0/playwright.ps1 install chromium
     ```
 
 2. Web アプリケーションを起動する
 
     ```bash
-    dotnet run --project src/ReplicaSync.Web
+    dotnet run --project src/VehicleVision.Pleasanter.ReplicaSync.Web
     ```
 
 3. スクリーンショット取得テストを実行する
 
     ```bash
-    dotnet test tests/ReplicaSync.Web.E2E
+    dotnet test tests/VehicleVision.Pleasanter.ReplicaSync.Web.E2E
     ```
 
 4. スクリーンショットは `docs/wiki/images/manual/` に保存される
