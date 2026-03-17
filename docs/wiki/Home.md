@@ -58,3 +58,4 @@ VehicleVision.Pleasanter.ReplicaSync のドキュメントへようこそ。
 - [README](https://github.com/vehiclevisionjp/VehicleVision.Pleasanter.ReplicaSync)
 - [NuGet パッケージ - VehicleVision.Pleasanter.ReplicaSync.Web](https://www.nuget.org/packages/VehicleVision.Pleasanter.ReplicaSync.Web)
 - [NuGet パッケージ - VehicleVision.Pleasanter.ReplicaSync.Worker](https://www.nuget.org/packages/VehicleVision.Pleasanter.ReplicaSync.Worker)
+- [NuGet パッケージ - VehicleVision.Pleasanter.ReplicaSync.Desktop](https://www.nuget.org/packages/VehicleVision.Pleasanter.ReplicaSync.Desktop)

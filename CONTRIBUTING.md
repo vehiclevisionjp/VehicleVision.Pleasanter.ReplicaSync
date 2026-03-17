@@ -78,6 +78,9 @@ dotnet run --project src/VehicleVision.Pleasanter.ReplicaSync.Web
 
 # Worker サービスを起動
 dotnet run --project src/VehicleVision.Pleasanter.ReplicaSync.Worker
+
+# デスクトップアプリを起動（Web サーバ不要）
+dotnet run --project src/VehicleVision.Pleasanter.ReplicaSync.Desktop
 ```
 
 `appsettings.json` の接続文字列を事前に設定してください。

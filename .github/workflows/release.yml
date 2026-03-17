@@ -76,38 +76,55 @@ jobs:
         run: dotnet test --no-build --configuration Release --verbosity normal --filter "FullyQualifiedName!~E2E"
 
       - name: Create NuGet package
-        run: dotnet pack --configuration Release --no-build --output ./nupkg
+        run: dotnet pack --configuration Release --no-build --output ./artifacts/nupkg
 
       - name: Publish Web
-        run: dotnet publish src/VehicleVision.Pleasanter.ReplicaSync.Web/VehicleVision.Pleasanter.ReplicaSync.Web.csproj --configuration Release --no-build --output ./publish/web
+        run: dotnet publish src/VehicleVision.Pleasanter.ReplicaSync.Web/VehicleVision.Pleasanter.ReplicaSync.Web.csproj --configuration Release --no-build --output ./artifacts/publish/web
 
       - name: Publish Worker
-        run: dotnet publish src/VehicleVision.Pleasanter.ReplicaSync.Worker/VehicleVision.Pleasanter.ReplicaSync.Worker.csproj --configuration Release --no-build --output ./publish/worker
+        run: dotnet publish src/VehicleVision.Pleasanter.ReplicaSync.Worker/VehicleVision.Pleasanter.ReplicaSync.Worker.csproj --configuration Release --no-build --output ./artifacts/publish/worker
+
+      - name: Publish Desktop (Windows x64)
+        run: dotnet publish src/VehicleVision.Pleasanter.ReplicaSync.Desktop/VehicleVision.Pleasanter.ReplicaSync.Desktop.csproj --configuration Release --runtime win-x64 --self-contained --output ./artifacts/publish/desktop-win-x64
+
+      - name: Publish Desktop (Linux x64)
+        run: dotnet publish src/VehicleVision.Pleasanter.ReplicaSync.Desktop/VehicleVision.Pleasanter.ReplicaSync.Desktop.csproj --configuration Release --runtime linux-x64 --self-contained --output ./artifacts/publish/desktop-linux-x64
+
+      - name: Publish Desktop (macOS x64)
+        run: dotnet publish src/VehicleVision.Pleasanter.ReplicaSync.Desktop/VehicleVision.Pleasanter.ReplicaSync.Desktop.csproj --configuration Release --runtime osx-x64 --self-contained --output ./artifacts/publish/desktop-osx-x64
+
+      - name: Publish Desktop (macOS ARM64)
+        run: dotnet publish src/VehicleVision.Pleasanter.ReplicaSync.Desktop/VehicleVision.Pleasanter.ReplicaSync.Desktop.csproj --configuration Release --runtime osx-arm64 --self-contained --output ./artifacts/publish/desktop-osx-arm64
 
       - name: Create Release ZIP
         run: |
           VERSION="v${{ steps.new_version.outputs.new_version }}"
           REPO="${{ github.event.repository.name }}"
+          DIST="$(pwd)/artifacts/dist"
+          mkdir -p "$DIST"
 
-          # Web ZIP
-          mkdir -p release-web
-          cp -r ./publish/web/* release-web/
-          cp README.md LICENSE release-web/
-          if [ -d "LICENSES" ]; then cp -r LICENSES release-web/LICENSES; fi
-          cd release-web && zip -r ../${REPO}_Web_${VERSION}.zip ./* && cd ..
+          create_zip() {
+            local name=$1 src=$2
+            local staging="$(pwd)/artifacts/staging/${name}"
+            mkdir -p "$staging"
+            cp -r ${src}/* "$staging/"
+            cp README.md LICENSE "$staging/"
+            if [ -d "LICENSES" ]; then cp -r LICENSES "$staging/LICENSES"; fi
+            (cd "$staging" && zip -r "${DIST}/${REPO}_${name}_${VERSION}.zip" ./*)
+          }
 
-          # Worker ZIP
-          mkdir -p release-worker
-          cp -r ./publish/worker/* release-worker/
-          cp README.md LICENSE release-worker/
-          if [ -d "LICENSES" ]; then cp -r LICENSES release-worker/LICENSES; fi
-          cd release-worker && zip -r ../${REPO}_Worker_${VERSION}.zip ./* && cd ..
+          create_zip "Web" "./artifacts/publish/web"
+          create_zip "Worker" "./artifacts/publish/worker"
+          create_zip "Desktop_win-x64" "./artifacts/publish/desktop-win-x64"
+          create_zip "Desktop_linux-x64" "./artifacts/publish/desktop-linux-x64"
+          create_zip "Desktop_osx-x64" "./artifacts/publish/desktop-osx-x64"
+          create_zip "Desktop_osx-arm64" "./artifacts/publish/desktop-osx-arm64"
 
       - name: Commit version update
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add -A -- ':!artifacts'
           git commit -m "chore: bump version to v${{ steps.new_version.outputs.new_version }}"
           git push
 
@@ -117,10 +134,10 @@ jobs:
           git push origin "Release_v${{ steps.new_version.outputs.new_version }}"
 
       - name: Publish to NuGet.org
-        run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: dotnet nuget push ./artifacts/nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
 
       - name: Publish to GitHub Packages
-        run: dotnet nuget push ./nupkg/*.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+        run: dotnet nuget push ./artifacts/nupkg/*.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -129,8 +146,12 @@ jobs:
           name: v${{ steps.new_version.outputs.new_version }}
           generate_release_notes: true
           files: |
-            ./${{ github.event.repository.name }}_Web_v${{ steps.new_version.outputs.new_version }}.zip
-            ./${{ github.event.repository.name }}_Worker_v${{ steps.new_version.outputs.new_version }}.zip
+            ./artifacts/dist/${{ github.event.repository.name }}_Web_v${{ steps.new_version.outputs.new_version }}.zip
+            ./artifacts/dist/${{ github.event.repository.name }}_Worker_v${{ steps.new_version.outputs.new_version }}.zip
+            ./artifacts/dist/${{ github.event.repository.name }}_Desktop_win-x64_v${{ steps.new_version.outputs.new_version }}.zip
+            ./artifacts/dist/${{ github.event.repository.name }}_Desktop_linux-x64_v${{ steps.new_version.outputs.new_version }}.zip
+            ./artifacts/dist/${{ github.event.repository.name }}_Desktop_osx-x64_v${{ steps.new_version.outputs.new_version }}.zip
+            ./artifacts/dist/${{ github.event.repository.name }}_Desktop_osx-arm64_v${{ steps.new_version.outputs.new_version }}.zip
           draft: false
           prerelease: false
         env:
