@@ -38,6 +38,7 @@ Hub-Spoke / Peer-to-Peer トポロジ、複数の競合解決戦略、マルチD
 - **同期キー** - 任意のカラムをキーとしたレコードマッチング
 - **削除同期** - ソフトデリート追跡による削除レコードの同期
 - **監査ログ** - すべての同期操作を詳細に記録
+- **構造化ロギング** - NLog によるコンソール・デバッグコンソール・ファイル出力の統一
 - **Web UI** - Blazor Server ベースの管理画面でインスタンス・定義・ログを管理
 - **バックグラウンドサービス** - .NET Worker Service による継続的なポーリング同期
 
@@ -125,6 +126,9 @@ dotnet run --project src/ReplicaSync.Web
 | Microsoft.EntityFrameworkCore.SqlServer | MIT                         | SQL Server プロバイダー         |
 | Microsoft.Extensions.Hosting            | MIT                         | Worker サービスホスティング     |
 | Microsoft.Extensions.Logging            | MIT                         | ログ抽象化                      |
+| NLog                                    | BSD-3-Clause                | ロギングフレームワーク          |
+| NLog.Extensions.Hosting                 | BSD-3-Clause                | NLog の .NET Host 統合          |
+| NLog.Web.AspNetCore                     | BSD-3-Clause                | NLog の ASP.NET Core 統合       |
 | Microsoft.Data.SqlClient                | MIT                         | SQL Server ADO.NET ドライバー   |
 | Npgsql                                  | PostgreSQL                  | PostgreSQL ADO.NET ドライバー   |
 | Npgsql.EntityFrameworkCore.PostgreSQL   | PostgreSQL                  | PostgreSQL EF Core プロバイダー |
