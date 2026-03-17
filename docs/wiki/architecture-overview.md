@@ -67,6 +67,7 @@ flowchart TD
 ### ReplicaSync.Web
 
 Blazor Server ベースの管理 Web UI です。同期インスタンス、同期定義、同期ログの閲覧・管理ができます。
+また、`X-Api-Key` ヘッダーによる API キー認証で保護された Web API エンドポイント（`/api/`）を提供し、外部システムからのプログラマティックな操作を可能にします。
 
 ### ReplicaSync.Worker
 

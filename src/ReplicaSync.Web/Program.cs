@@ -63,6 +63,9 @@ try
     builder.Services.AddRazorComponents()
         .AddInteractiveServerComponents();
 
+    // Add Web API controllers
+    builder.Services.AddControllers();
+
     // Configure the sync config database
     var configDbConnection = builder.Configuration.GetConnectionString("ConfigDatabase")
         ?? "Data Source=ReplicaSync.db";
@@ -112,6 +115,7 @@ try
 
     app.UseAntiforgery();
     app.MapStaticAssets();
+    app.MapControllers();
     app.MapRazorComponents<App>()
         .AddInteractiveServerRenderMode();
 
