@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using VehicleVision.Pleasanter.ReplicaSync.Core.Enums;
 
 namespace VehicleVision.Pleasanter.ReplicaSync.Core.Models;

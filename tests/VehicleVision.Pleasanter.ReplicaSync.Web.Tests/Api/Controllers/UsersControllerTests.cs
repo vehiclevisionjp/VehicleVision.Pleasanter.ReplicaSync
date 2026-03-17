@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using VehicleVision.Pleasanter.ReplicaSync.Core.Enums;
 using VehicleVision.Pleasanter.ReplicaSync.Core.Interfaces;
 using VehicleVision.Pleasanter.ReplicaSync.Core.Models;
@@ -226,5 +226,30 @@ public class UsersControllerTests
 
         public Task<bool> AnyUsersExistAsync(CancellationToken cancellationToken = default)
             => Task.FromResult(_users.Count > 0);
+
+        public Task RecordFailedLoginAsync(int userId, CancellationToken cancellationToken = default)
+        {
+            var user = _users.Find(u => u.Id == userId);
+            if (user is not null) user.FailedLoginCount++;
+            return Task.CompletedTask;
+        }
+
+        public Task ResetFailedLoginCountAsync(int userId, CancellationToken cancellationToken = default)
+        {
+            var user = _users.Find(u => u.Id == userId);
+            if (user is not null)
+            {
+                user.FailedLoginCount = 0;
+                user.LockoutEndUtc = null;
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task LockoutUserAsync(int userId, DateTime lockoutEndUtc, CancellationToken cancellationToken = default)
+        {
+            var user = _users.Find(u => u.Id == userId);
+            if (user is not null) user.LockoutEndUtc = lockoutEndUtc;
+            return Task.CompletedTask;
+        }
     }
 }

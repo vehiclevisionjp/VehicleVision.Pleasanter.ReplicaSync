@@ -55,6 +55,8 @@ erDiagram
         string PasswordHash
         string Role
         bool MustChangePassword
+        int FailedLoginCount
+        datetime LockoutEndUtc
         datetime CreatedAt
         datetime UpdatedAt
     }
@@ -157,6 +159,8 @@ erDiagram
 | `PasswordHash`       | `string`   | Yes  | -      | PBKDF2 ハッシュ（`base64salt:base64hash` 形式） |
 | `Role`               | `string`   | -    | 50     | 権限ロール（`User` / `Administrator`）          |
 | `MustChangePassword` | `bool`     | -    | -      | 次回ログイン時にパスワード変更を強制            |
+| `FailedLoginCount`   | `int`      | -    | -      | 連続ログイン失敗回数（既定値: 0）               |
+| `LockoutEndUtc`      | `datetime` | -    | -      | ロックアウト解除日時（UTC、null で未ロック）    |
 | `CreatedAt`          | `datetime` | -    | -      | 作成日時（UTC）                                 |
 | `UpdatedAt`          | `datetime` | -    | -      | 更新日時（UTC）                                 |
 

@@ -1,4 +1,4 @@
-namespace VehicleVision.Pleasanter.ReplicaSync.Web.Security;
+﻿namespace VehicleVision.Pleasanter.ReplicaSync.Web.Security;
 
 /// <summary>
 /// Security settings for the ReplicaSync web application.

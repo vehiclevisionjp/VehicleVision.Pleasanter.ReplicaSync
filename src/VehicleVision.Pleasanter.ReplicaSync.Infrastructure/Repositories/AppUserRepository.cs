@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using VehicleVision.Pleasanter.ReplicaSync.Core.Interfaces;
 using VehicleVision.Pleasanter.ReplicaSync.Core.Models;
 using VehicleVision.Pleasanter.ReplicaSync.Infrastructure.Data;

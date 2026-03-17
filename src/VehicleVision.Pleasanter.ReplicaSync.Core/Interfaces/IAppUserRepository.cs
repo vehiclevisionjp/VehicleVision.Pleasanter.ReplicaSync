@@ -1,4 +1,4 @@
-using VehicleVision.Pleasanter.ReplicaSync.Core.Models;
+﻿using VehicleVision.Pleasanter.ReplicaSync.Core.Models;
 
 namespace VehicleVision.Pleasanter.ReplicaSync.Core.Interfaces;
 
