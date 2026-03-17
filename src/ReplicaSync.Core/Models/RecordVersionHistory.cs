@@ -44,6 +44,9 @@ public class RecordVersionHistory
     /// <summary>Gets or sets the Pleasanter UpdatedTime of the record at snapshot time.</summary>
     public DateTime ChangedAt { get; set; }
 
+    /// <summary>Gets or sets whether this snapshot was captured before a deletion (true) or an update (false).</summary>
+    public bool IsDeleteSnapshot { get; set; }
+
     /// <summary>Gets or sets when this version history entry was created.</summary>
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

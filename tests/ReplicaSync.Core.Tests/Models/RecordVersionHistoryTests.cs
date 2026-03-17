@@ -21,6 +21,7 @@ public class RecordVersionHistoryTests
         Assert.Equal(string.Empty, entry.Body);
         Assert.Equal("{}", entry.ColumnSnapshotJson);
         Assert.Equal(0, entry.ChangedBy);
+        Assert.False(entry.IsDeleteSnapshot);
     }
 
     [Fact]
@@ -60,5 +61,15 @@ public class RecordVersionHistoryTests
         Assert.Equal(10, entry.ChangedBy);
         Assert.Equal(changedAt, entry.ChangedAt);
         Assert.Equal(createdAt, entry.CreatedAt);
+    }
+
+    [Fact]
+    public void IsDeleteSnapshotShouldBeSettable()
+    {
+        // Arrange & Act
+        var entry = new RecordVersionHistory { IsDeleteSnapshot = true };
+
+        // Assert
+        Assert.True(entry.IsDeleteSnapshot);
     }
 }

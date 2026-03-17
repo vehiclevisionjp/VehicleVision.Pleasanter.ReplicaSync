@@ -209,6 +209,12 @@ public class SyncEngine : ISyncEngine
 
                         if (targetRecord is not null)
                         {
+                            // Capture version history snapshot before deletion
+                            await _versionHistoryService.CaptureDeleteSnapshotAsync(
+                                definition, target.InstanceId,
+                                targetMapping.TargetSiteId, targetRecord,
+                                cancellationToken).ConfigureAwait(false);
+
                             await _dbAccess.DeleteRecordAsync(
                                 target.ConnectionString, target.DbmsType,
                                 targetMapping.TargetSiteId, referenceType,

@@ -74,6 +74,7 @@ public class VersionHistoryServiceTests
         Assert.Equal(5, result.ChangedBy);
         Assert.Equal(updatedTime, result.ChangedAt);
         Assert.Contains("ClassA", result.ColumnSnapshotJson);
+        Assert.False(result.IsDeleteSnapshot);
     }
 
     [Fact]
@@ -202,5 +203,75 @@ public class VersionHistoryServiceTests
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(
             () => _service.CaptureSnapshotAsync(definition, "inst", 100, null!));
+    }
+
+    [Fact]
+    public async Task CaptureDeleteSnapshotShouldCreateEntryWithIsDeleteSnapshotTrue()
+    {
+        // Arrange
+        var definition = new SyncDefinition
+        {
+            SyncId = "test-sync",
+            VersionHistoryEnabled = true
+        };
+        var record = new PleasanterRecord
+        {
+            RecordId = 42,
+            Title = "Deleted Title",
+            Body = "Deleted Body",
+            Updator = 7,
+            UpdatedTime = new DateTime(2026, 3, 17, 10, 0, 0, DateTimeKind.Utc),
+            ColumnValues = new Dictionary<string, object?> { ["ClassA"] = "del-value" }
+        };
+
+        _repository.GetNextVersionNumberAsync("test-sync", "instance-a", 100, 42, Arg.Any<CancellationToken>())
+            .Returns(5);
+        _repository.CreateAsync(Arg.Any<RecordVersionHistory>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo => callInfo.Arg<RecordVersionHistory>());
+
+        // Act
+        var result = await _service.CaptureDeleteSnapshotAsync(definition, "instance-a", 100, record);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result.IsDeleteSnapshot);
+        Assert.Equal("test-sync", result.SyncId);
+        Assert.Equal(42, result.RecordId);
+        Assert.Equal(5, result.VersionNumber);
+        Assert.Equal("Deleted Title", result.Title);
+    }
+
+    [Fact]
+    public async Task CaptureDeleteSnapshotShouldReturnNullWhenVersionHistoryDisabled()
+    {
+        // Arrange
+        var definition = new SyncDefinition { VersionHistoryEnabled = false };
+        var record = new PleasanterRecord { RecordId = 1 };
+
+        // Act
+        var result = await _service.CaptureDeleteSnapshotAsync(definition, "instance-a", 100, record);
+
+        // Assert
+        Assert.Null(result);
+        await _repository.DidNotReceive().CreateAsync(Arg.Any<RecordVersionHistory>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task CaptureDeleteSnapshotShouldThrowWhenDefinitionIsNull()
+    {
+        // Arrange, Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(
+            () => _service.CaptureDeleteSnapshotAsync(null!, "inst", 100, new PleasanterRecord()));
+    }
+
+    [Fact]
+    public async Task CaptureDeleteSnapshotShouldThrowWhenRecordIsNull()
+    {
+        // Arrange
+        var definition = new SyncDefinition { VersionHistoryEnabled = true };
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(
+            () => _service.CaptureDeleteSnapshotAsync(definition, "inst", 100, null!));
     }
 }

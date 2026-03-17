@@ -36,12 +36,42 @@ public class VersionHistoryService
     /// <param name="existingRecord">The existing record to snapshot (before overwrite).</param>
     /// <param name="cancellationToken">A cancellation token.</param>
     /// <returns>The created version history entry, or null if version history is disabled.</returns>
-    public async Task<RecordVersionHistory?> CaptureSnapshotAsync(
+    public Task<RecordVersionHistory?> CaptureSnapshotAsync(
         SyncDefinition definition,
         string instanceId,
         long siteId,
         PleasanterRecord existingRecord,
         CancellationToken cancellationToken = default)
+    {
+        return CaptureSnapshotCoreAsync(definition, instanceId, siteId, existingRecord, isDeleteSnapshot: false, cancellationToken);
+    }
+
+    /// <summary>
+    /// Captures a snapshot of the existing target record before it is deleted by a sync operation.
+    /// </summary>
+    /// <param name="definition">The sync definition with version history settings.</param>
+    /// <param name="instanceId">The instance ID where the record resides.</param>
+    /// <param name="siteId">The Pleasanter site ID.</param>
+    /// <param name="existingRecord">The existing record to snapshot (before deletion).</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The created version history entry, or null if version history is disabled.</returns>
+    public Task<RecordVersionHistory?> CaptureDeleteSnapshotAsync(
+        SyncDefinition definition,
+        string instanceId,
+        long siteId,
+        PleasanterRecord existingRecord,
+        CancellationToken cancellationToken = default)
+    {
+        return CaptureSnapshotCoreAsync(definition, instanceId, siteId, existingRecord, isDeleteSnapshot: true, cancellationToken);
+    }
+
+    private async Task<RecordVersionHistory?> CaptureSnapshotCoreAsync(
+        SyncDefinition definition,
+        string instanceId,
+        long siteId,
+        PleasanterRecord existingRecord,
+        bool isDeleteSnapshot,
+        CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(definition);
         ArgumentNullException.ThrowIfNull(existingRecord);
@@ -65,14 +95,16 @@ public class VersionHistoryService
             Body = existingRecord.Body,
             ColumnSnapshotJson = JsonSerializer.Serialize(existingRecord.ColumnValues),
             ChangedBy = existingRecord.Updator,
-            ChangedAt = existingRecord.UpdatedTime
+            ChangedAt = existingRecord.UpdatedTime,
+            IsDeleteSnapshot = isDeleteSnapshot
         };
 
         var created = await _repository.CreateAsync(entry, cancellationToken).ConfigureAwait(false);
 
+        var snapshotType = isDeleteSnapshot ? "delete" : "update";
         _logger.LogDebug(
-            "Captured version {Version} for record {RecordId} on instance '{InstanceId}' site {SiteId}.",
-            nextVersion, existingRecord.RecordId, instanceId, siteId);
+            "Captured {SnapshotType} version {Version} for record {RecordId} on instance '{InstanceId}' site {SiteId}.",
+            snapshotType, nextVersion, existingRecord.RecordId, instanceId, siteId);
 
         return created;
     }

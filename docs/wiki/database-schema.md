@@ -137,6 +137,7 @@ erDiagram
         string ColumnSnapshotJson
         int ChangedBy
         datetime ChangedAt
+        bool IsDeleteSnapshot
         datetime CreatedAt
     }
 ```
@@ -310,6 +311,7 @@ erDiagram
 | `ColumnSnapshotJson` | `string`   | -    | -      | カラム値の JSON スナップショット                   |
 | `ChangedBy`          | `int`      | -    | -      | スナップショット時点の最終更新 Pleasanter ユーザー |
 | `ChangedAt`          | `datetime` | -    | -      | スナップショット時点のレコード更新日時             |
+| `IsDeleteSnapshot`   | `bool`     | -    | -      | 削除前スナップショット（`true`）か更新前（`false`）|
 | `CreatedAt`          | `datetime` | -    | -      | 履歴エントリ作成日時（UTC）                        |
 
 **インデックス:**
