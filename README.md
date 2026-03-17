@@ -12,18 +12,20 @@ Hub-Spoke / Peer-to-Peer トポロジ、複数の競合解決戦略、マルチD
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [主な機能](#主な機能)
-- [セットアップ](#セットアップ)
-    - [前提条件](#前提条件)
-    - [クローン](#クローン)
-    - [ビルド](#ビルド)
-- [使用方法](#使用方法)
-    - [Worker サービスの起動](#worker-サービスの起動)
-    - [Web UI の起動](#web-ui-の起動)
-- [ドキュメント](#ドキュメント)
-- [サードパーティライセンス](#サードパーティライセンス)
-- [セキュリティ](#セキュリティ)
-- [謝辞](#謝辞)
+- [VehicleVision.Pleasanter.ReplicaSync](#vehiclevisionpleasanterreplicasync)
+    - [主な機能](#主な機能)
+    - [セットアップ](#セットアップ)
+        - [前提条件](#前提条件)
+        - [クローン](#クローン)
+        - [ビルド](#ビルド)
+            - [ドキュメントツールのセットアップ（任意）](#ドキュメントツールのセットアップ任意)
+    - [使用方法](#使用方法)
+        - [Worker サービスの起動](#worker-サービスの起動)
+        - [Web UI の起動](#web-ui-の起動)
+    - [ドキュメント](#ドキュメント)
+    - [サードパーティライセンス](#サードパーティライセンス)
+    - [セキュリティ](#セキュリティ)
+    - [謝辞](#謝辞)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -32,7 +34,7 @@ Hub-Spoke / Peer-to-Peer トポロジ、複数の競合解決戦略、マルチD
 - **マルチトポロジ対応** - Hub-Spoke（親子）および Peer-to-Peer トポロジをサポート
 - **競合解決戦略** - SourceWins / LastWriteWins / ManualResolution の3つの戦略から選択
 - **カラムレベル制御** - 同期対象カラムの Include / Exclude フィルタリング
-- **マルチDBMS** - SQL Server、PostgreSQL、MySQL の Pleasanter インスタンスに対応
+- **マルチDBMS** - SQL Server、PostgreSQL、MySQL の Pleasanter インスタンスおよび構成データベースに対応
 - **同期キー** - 任意のカラムをキーとしたレコードマッチング
 - **削除同期** - ソフトデリート追跡による削除レコードの同期
 - **監査ログ** - すべての同期操作を詳細に記録
@@ -117,16 +119,17 @@ dotnet run --project src/ReplicaSync.Web
 
 <!-- markdownlint-disable MD013 -->
 
-| ライブラリ                              | ライセンス | 用途                            |
-| --------------------------------------- | ---------- | ------------------------------- |
-| Microsoft.EntityFrameworkCore           | MIT        | ORM / 構成データベースアクセス  |
-| Microsoft.EntityFrameworkCore.SqlServer | MIT        | SQL Server プロバイダー         |
-| Microsoft.Extensions.Hosting            | MIT        | Worker サービスホスティング     |
-| Microsoft.Extensions.Logging            | MIT        | ログ抽象化                      |
-| Microsoft.Data.SqlClient                | MIT        | SQL Server ADO.NET ドライバー   |
-| Npgsql                                  | PostgreSQL | PostgreSQL ADO.NET ドライバー   |
-| Npgsql.EntityFrameworkCore.PostgreSQL   | PostgreSQL | PostgreSQL EF Core プロバイダー |
-| MySqlConnector                          | MIT        | MySQL ADO.NET ドライバー        |
+| ライブラリ                              | ライセンス                  | 用途                            |
+| --------------------------------------- | --------------------------- | ------------------------------- |
+| Microsoft.EntityFrameworkCore           | MIT                         | ORM / 構成データベースアクセス  |
+| Microsoft.EntityFrameworkCore.SqlServer | MIT                         | SQL Server プロバイダー         |
+| Microsoft.Extensions.Hosting            | MIT                         | Worker サービスホスティング     |
+| Microsoft.Extensions.Logging            | MIT                         | ログ抽象化                      |
+| Microsoft.Data.SqlClient                | MIT                         | SQL Server ADO.NET ドライバー   |
+| Npgsql                                  | PostgreSQL                  | PostgreSQL ADO.NET ドライバー   |
+| Npgsql.EntityFrameworkCore.PostgreSQL   | PostgreSQL                  | PostgreSQL EF Core プロバイダー |
+| MySqlConnector                          | MIT                         | MySQL ADO.NET ドライバー        |
+| MySql.EntityFrameworkCore               | GPL-2.0 with FOSS exception | MySQL EF Core プロバイダー      |
 
 <!-- markdownlint-enable MD013 -->
 

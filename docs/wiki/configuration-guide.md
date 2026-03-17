@@ -41,6 +41,7 @@
 | ------------ | ---------- |
 | `SqlServer`  | SQL Server |
 | `PostgreSql` | PostgreSQL |
+| `MySql`      | MySQL      |
 
 ## 同期インスタンス（SyncInstance）
 

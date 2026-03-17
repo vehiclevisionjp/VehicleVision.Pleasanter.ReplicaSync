@@ -5,17 +5,16 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [アーキテクチャ概要](#アーキテクチャ概要)
-  - [システム概要](#システム概要)
-  - [レイヤー構造](#レイヤー構造)
+- [システム概要](#システム概要)
+- [レイヤー構造](#レイヤー構造)
     - [ReplicaSync.Core](#replicasynccore)
     - [ReplicaSync.Infrastructure](#replicasyncinfrastructure)
     - [ReplicaSync.Web](#replicasyncweb)
     - [ReplicaSync.Worker](#replicasyncworker)
-  - [プロジェクト構成](#プロジェクト構成)
-  - [データフロー](#データフロー)
-  - [対応データベース](#対応データベース)
-  - [同期トポロジ](#同期トポロジ)
+- [プロジェクト構成](#プロジェクト構成)
+- [データフロー](#データフロー)
+- [対応データベース](#対応データベース)
+- [同期トポロジ](#同期トポロジ)
     - [Hub-Spoke（親子）](#hub-spoke親子)
     - [Peer-to-Peer](#peer-to-peer)
 
@@ -127,7 +126,7 @@ flowchart LR
 | ---------- | ----------------------- | ---------------- |
 | SQL Server | 対応                    | 対応             |
 | PostgreSQL | 対応                    | 対応             |
-| MySQL      | 対応                    | 非対応           |
+| MySQL      | 対応                    | 対応             |
 
 ## 同期トポロジ
 

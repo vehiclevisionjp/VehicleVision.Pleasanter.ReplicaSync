@@ -5,21 +5,18 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [同期エンジン](#同期エンジン)
-  - [同期処理フロー](#同期処理フロー)
-  - [競合解決戦略](#競合解決戦略)
+- [同期処理フロー](#同期処理フロー)
+- [競合解決戦略](#競合解決戦略)
     - [SourceWins](#sourcewins)
     - [LastWriteWins](#lastwritewins)
     - [ManualResolution](#manualresolution)
     - [FieldLevelMerge](#fieldlevelmerge)
-  - [ルールエンジン](#ルールエンジン)
+- [ルールエンジン](#ルールエンジン)
     - [カラム決定の優先順位](#カラム決定の優先順位)
     - [対象カラム](#対象カラム)
-      - [Results / Issues](#results--issues)
-      - [Wikis](#wikis)
-  - [変更検出](#変更検出)
-  - [同期ログ](#同期ログ)
-  - [エラーハンドリング](#エラーハンドリング)
+- [変更検出](#変更検出)
+- [同期ログ](#同期ログ)
+- [エラーハンドリング](#エラーハンドリング)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ReplicaSync.Core.Enums;
 using ReplicaSync.Core.Interfaces;
@@ -40,10 +40,8 @@ public static class ServiceCollectionExtensions
                     options.UseNpgsql(connectionString);
                     break;
                 case DbmsType.MySql:
-                    throw new NotSupportedException(
-                        "MySQL is not yet supported as a configuration database provider with .NET 10. " +
-                        "Use SQL Server or PostgreSQL for the configuration database. " +
-                        "MySQL is fully supported for Pleasanter data access.");
+                    options.UseMySQL(connectionString);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(configDbType), configDbType, "Unsupported DBMS type.");
             }
