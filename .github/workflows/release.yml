@@ -75,25 +75,33 @@ jobs:
       - name: Run tests
         run: dotnet test --no-build --configuration Release --verbosity normal
 
-      # TODO: NuGet パッケージ公開が必要な場合はコメントを解除すること
-      # - name: Create NuGet package
-      #   run: dotnet pack --configuration Release --no-build --output ./nupkg
+      - name: Create NuGet package
+        run: dotnet pack --configuration Release --no-build --output ./nupkg
+
+      - name: Publish Web
+        run: dotnet publish src/ReplicaSync.Web/ReplicaSync.Web.csproj --configuration Release --no-build --output ./publish/web
+
+      - name: Publish Worker
+        run: dotnet publish src/ReplicaSync.Worker/ReplicaSync.Worker.csproj --configuration Release --no-build --output ./publish/worker
 
       - name: Create Release ZIP
         run: |
-          mkdir -p release-temp
-          cp README.md release-temp/
-          cp AUTHORS release-temp/
-          cp LICENSE release-temp/
-          if [ -d "LICENSES" ]; then
-            cp -r LICENSES release-temp/LICENSES
-          fi
-          if [ -d "docs/wiki" ]; then
-            mkdir -p release-temp/wiki
-            cp docs/wiki/*.md release-temp/wiki/
-          fi
-          cd release-temp
-          zip -r ../${{ github.event.repository.name }}_v${{ steps.new_version.outputs.new_version }}.zip ./*
+          VERSION="v${{ steps.new_version.outputs.new_version }}"
+          REPO="${{ github.event.repository.name }}"
+
+          # Web ZIP
+          mkdir -p release-web
+          cp -r ./publish/web/* release-web/
+          cp README.md LICENSE release-web/
+          if [ -d "LICENSES" ]; then cp -r LICENSES release-web/LICENSES; fi
+          cd release-web && zip -r ../${REPO}_Web_${VERSION}.zip ./* && cd ..
+
+          # Worker ZIP
+          mkdir -p release-worker
+          cp -r ./publish/worker/* release-worker/
+          cp README.md LICENSE release-worker/
+          if [ -d "LICENSES" ]; then cp -r LICENSES release-worker/LICENSES; fi
+          cd release-worker && zip -r ../${REPO}_Worker_${VERSION}.zip ./* && cd ..
 
       - name: Commit version update
         run: |
@@ -108,12 +116,11 @@ jobs:
           git tag "Release_v${{ steps.new_version.outputs.new_version }}"
           git push origin "Release_v${{ steps.new_version.outputs.new_version }}"
 
-      # TODO: NuGet パッケージ公開が必要な場合はコメントを解除すること
-      # - name: Publish to NuGet.org
-      #   run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      - name: Publish to NuGet.org
+        run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
 
-      # - name: Publish to GitHub Packages
-      #   run: dotnet nuget push ./nupkg/*.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+      - name: Publish to GitHub Packages
+        run: dotnet nuget push ./nupkg/*.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -122,7 +129,8 @@ jobs:
           name: v${{ steps.new_version.outputs.new_version }}
           generate_release_notes: true
           files: |
-            ./${{ github.event.repository.name }}_v${{ steps.new_version.outputs.new_version }}.zip
+            ./${{ github.event.repository.name }}_Web_v${{ steps.new_version.outputs.new_version }}.zip
+            ./${{ github.event.repository.name }}_Worker_v${{ steps.new_version.outputs.new_version }}.zip
           draft: false
           prerelease: false
         env:

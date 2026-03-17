@@ -40,7 +40,7 @@ public static class ServiceCollectionExtensions
                     options.UseNpgsql(connectionString);
                     break;
                 case DbmsType.MySql:
-                    options.UseMySQL(connectionString);
+                    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 0)));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(configDbType), configDbType, "Unsupported DBMS type.");

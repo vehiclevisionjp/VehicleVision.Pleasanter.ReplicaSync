@@ -2,7 +2,7 @@
 
 <!-- markdownlint-disable MD013 -->
 
-[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/) [![Pleasanter](https://img.shields.io/badge/Pleasanter-1.3.13.0%2B-00A0E9)](https://pleasanter.org/) [![License](https://img.shields.io/badge/License-LGPL--2.1-blue.svg)](LICENSE)
+[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/) [![Pleasanter](https://img.shields.io/badge/Pleasanter-1.3.13.0%2B-00A0E9)](https://pleasanter.org/) [![License](https://img.shields.io/badge/License-LGPL--2.1-blue.svg)](LICENSE) [![NuGet](https://img.shields.io/nuget/v/ReplicaSync.Web.svg?logo=nuget)](https://www.nuget.org/packages/ReplicaSync.Web)
 
 <!-- markdownlint-enable MD013 -->
 
@@ -114,26 +114,42 @@ dotnet run --project src/ReplicaSync.Web
 - [Wiki](docs/wiki/Home.md) - 機能説明、アーキテクチャ、設定ガイド
 - [コントリビューションガイド](CONTRIBUTING.md) - 開発参加方法
 
+## NuGet パッケージ
+
+<!-- markdownlint-disable MD013 -->
+
+| パッケージ                                                              | 説明                                 |
+| ----------------------------------------------------------------------- | ------------------------------------ |
+| [ReplicaSync.Web](https://www.nuget.org/packages/ReplicaSync.Web)       | Blazor Server ベースの管理 Web UI    |
+| [ReplicaSync.Worker](https://www.nuget.org/packages/ReplicaSync.Worker) | バックグラウンド同期 Worker サービス |
+
+<!-- markdownlint-enable MD013 -->
+
+```bash
+dotnet add package ReplicaSync.Web
+dotnet add package ReplicaSync.Worker
+```
+
 ## サードパーティライセンス
 
 このプロジェクトは以下のサードパーティライブラリを使用しています：
 
 <!-- markdownlint-disable MD013 -->
 
-| ライブラリ                              | ライセンス                  | 用途                            |
-| --------------------------------------- | --------------------------- | ------------------------------- |
-| Microsoft.EntityFrameworkCore           | MIT                         | ORM / 構成データベースアクセス  |
-| Microsoft.EntityFrameworkCore.SqlServer | MIT                         | SQL Server プロバイダー         |
-| Microsoft.Extensions.Hosting            | MIT                         | Worker サービスホスティング     |
-| Microsoft.Extensions.Logging            | MIT                         | ログ抽象化                      |
-| NLog                                    | BSD-3-Clause                | ロギングフレームワーク          |
-| NLog.Extensions.Hosting                 | BSD-3-Clause                | NLog の .NET Host 統合          |
-| NLog.Web.AspNetCore                     | BSD-3-Clause                | NLog の ASP.NET Core 統合       |
-| Microsoft.Data.SqlClient                | MIT                         | SQL Server ADO.NET ドライバー   |
-| Npgsql                                  | PostgreSQL                  | PostgreSQL ADO.NET ドライバー   |
-| Npgsql.EntityFrameworkCore.PostgreSQL   | PostgreSQL                  | PostgreSQL EF Core プロバイダー |
-| MySqlConnector                          | MIT                         | MySQL ADO.NET ドライバー        |
-| MySql.EntityFrameworkCore               | GPL-2.0 with FOSS exception | MySQL EF Core プロバイダー      |
+| ライブラリ                              | ライセンス   | 用途                            |
+| --------------------------------------- | ------------ | ------------------------------- |
+| Microsoft.EntityFrameworkCore           | MIT          | ORM / 構成データベースアクセス  |
+| Microsoft.EntityFrameworkCore.SqlServer | MIT          | SQL Server プロバイダー         |
+| Microsoft.Extensions.Hosting            | MIT          | Worker サービスホスティング     |
+| Microsoft.Extensions.Logging            | MIT          | ログ抽象化                      |
+| NLog                                    | BSD-3-Clause | ロギングフレームワーク          |
+| NLog.Extensions.Hosting                 | BSD-3-Clause | NLog の .NET Host 統合          |
+| NLog.Web.AspNetCore                     | BSD-3-Clause | NLog の ASP.NET Core 統合       |
+| Microsoft.Data.SqlClient                | MIT          | SQL Server ADO.NET ドライバー   |
+| Npgsql                                  | PostgreSQL   | PostgreSQL ADO.NET ドライバー   |
+| Npgsql.EntityFrameworkCore.PostgreSQL   | PostgreSQL   | PostgreSQL EF Core プロバイダー |
+| MySqlConnector                          | MIT          | MySQL ADO.NET ドライバー        |
+| Microting.EntityFrameworkCore.MySql     | MIT          | MySQL EF Core プロバイダー      |
 
 <!-- markdownlint-enable MD013 -->
 

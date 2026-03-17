@@ -23,6 +23,18 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <!-- NuGet パッケージメタデータ -->
+    <Version>0.0.0</Version>
+    <Authors>VehicleVision</Authors>
+    <Company>VehicleVision</Company>
+    <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/vehiclevisionjp/VehicleVision.Pleasanter.ReplicaSync</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/vehiclevisionjp/VehicleVision.Pleasanter.ReplicaSync</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <!-- コンパイラ警告レベル -->
     <WarningLevel>5</WarningLevel>
 

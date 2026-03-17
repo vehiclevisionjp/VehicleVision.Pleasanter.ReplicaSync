@@ -169,7 +169,10 @@ flowchart TD
     I --> J[リリース ZIP 作成]
     J --> K[バージョン更新コミット]
     K --> L[Git タグ作成]
-    L --> M[GitHub Release 作成]
+    L --> LA[NuGet パッケージ作成]
+    LA --> LB[NuGet.org へ公開]
+    LB --> LC[GitHub Packages へ公開]
+    LC --> M[GitHub Release 作成]
     M --> N[main を develop へマージ]
     N --> O[完了]
 
@@ -179,11 +182,10 @@ flowchart TD
 
 ### 必要なシークレット
 
-| シークレット名 | 用途                                         |
-| -------------- | -------------------------------------------- |
-| `GITHUB_TOKEN` | 自動提供。コミット、タグ、リリース作成に使用 |
-
-<!-- TODO: NuGet 公開が必要な場合は NUGET_API_KEY を追加 -->
+| シークレット名  | 用途                                         |
+| --------------- | -------------------------------------------- |
+| `GITHUB_TOKEN`  | 自動提供。コミット、タグ、リリース作成に使用 |
+| `NUGET_API_KEY` | NuGet.org へのパッケージ公開に使用           |
 
 ---
 

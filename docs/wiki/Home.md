@@ -16,6 +16,7 @@ VehicleVision.Pleasanter.ReplicaSync のドキュメントへようこそ。
 
 ### インストールガイド
 
+- [NuGet パッケージ](installation-nuget.md) - NuGet を使用した最も簡単なセットアップ方法
 - [Azure 環境](installation-azure.md) - Azure App Service / Azure SQL へのデプロイ手順
 - [オンプレミス Windows](installation-windows.md) - Windows Server / IIS / Windows サービスでの構築手順
 - [オンプレミス Linux](installation-linux.md) - Debian / Ubuntu / AlmaLinux での構築手順
@@ -32,3 +33,5 @@ VehicleVision.Pleasanter.ReplicaSync のドキュメントへようこそ。
 
 - [README](https://github.com/vehiclevisionjp/VehicleVision.Pleasanter.ReplicaSync)
 - [コントリビューションガイド](https://github.com/vehiclevisionjp/VehicleVision.Pleasanter.ReplicaSync/blob/main/CONTRIBUTING.md)
+- [NuGet パッケージ - ReplicaSync.Web](https://www.nuget.org/packages/ReplicaSync.Web)
+- [NuGet パッケージ - ReplicaSync.Worker](https://www.nuget.org/packages/ReplicaSync.Worker)
