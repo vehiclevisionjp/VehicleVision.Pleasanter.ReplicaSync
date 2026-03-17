@@ -1,0 +1,13 @@
+Microting.EntityFrameworkCore.MySql
+Copyright (c) Pomelo Foundation / Microting. All rights reserved.
+
+License: MIT
+Project: https://github.com/microting/Pomelo.EntityFrameworkCore.MySql
+NuGet: https://www.nuget.org/packages/Microting.EntityFrameworkCore.MySql
+Original: https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql
+
+This is a fork of Pomelo.EntityFrameworkCore.MySql that follows the .NET
+release cycle closely. Licensed under the MIT license.
+
+Full license text:
+https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql/blob/main/LICENSE

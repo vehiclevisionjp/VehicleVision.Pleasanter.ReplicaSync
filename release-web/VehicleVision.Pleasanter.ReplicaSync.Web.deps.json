@@ -6,11 +6,11 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v10.0": {
-      "VehicleVision.Pleasanter.ReplicaSync.Web/0.0.1": {
+      "VehicleVision.Pleasanter.ReplicaSync.Web/0.0.2": {
         "dependencies": {
           "NLog.Web.AspNetCore": "6.1.2",
-          "VehicleVision.Pleasanter.ReplicaSync.Core": "0.0.1",
-          "VehicleVision.Pleasanter.ReplicaSync.Infrastructure": "0.0.1"
+          "VehicleVision.Pleasanter.ReplicaSync.Core": "0.0.2",
+          "VehicleVision.Pleasanter.ReplicaSync.Infrastructure": "0.0.2"
         },
         "runtime": {
           "VehicleVision.Pleasanter.ReplicaSync.Web.dll": {}
@@ -408,15 +408,15 @@
           }
         }
       },
-      "VehicleVision.Pleasanter.ReplicaSync.Core/0.0.1": {
+      "VehicleVision.Pleasanter.ReplicaSync.Core/0.0.2": {
         "runtime": {
           "VehicleVision.Pleasanter.ReplicaSync.Core.dll": {
-            "assemblyVersion": "0.0.1.0",
-            "fileVersion": "0.0.1.0"
+            "assemblyVersion": "0.0.2.0",
+            "fileVersion": "0.0.2.0"
           }
         }
       },
-      "VehicleVision.Pleasanter.ReplicaSync.Infrastructure/0.0.1": {
+      "VehicleVision.Pleasanter.ReplicaSync.Infrastructure/0.0.2": {
         "dependencies": {
           "Microsoft.Data.SqlClient": "6.1.1",
           "Microsoft.EntityFrameworkCore": "10.0.5",
@@ -425,19 +425,19 @@
           "MySqlConnector": "2.5.0",
           "Npgsql": "10.0.2",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "10.0.1",
-          "VehicleVision.Pleasanter.ReplicaSync.Core": "0.0.1"
+          "VehicleVision.Pleasanter.ReplicaSync.Core": "0.0.2"
         },
         "runtime": {
           "VehicleVision.Pleasanter.ReplicaSync.Infrastructure.dll": {
-            "assemblyVersion": "0.0.1.0",
-            "fileVersion": "0.0.1.0"
+            "assemblyVersion": "0.0.2.0",
+            "fileVersion": "0.0.2.0"
           }
         }
       }
     }
   },
   "libraries": {
-    "VehicleVision.Pleasanter.ReplicaSync.Web/0.0.1": {
+    "VehicleVision.Pleasanter.ReplicaSync.Web/0.0.2": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
@@ -659,12 +659,12 @@
       "path": "system.security.cryptography.protecteddata/9.0.4",
       "hashPath": "system.security.cryptography.protecteddata.9.0.4.nupkg.sha512"
     },
-    "VehicleVision.Pleasanter.ReplicaSync.Core/0.0.1": {
+    "VehicleVision.Pleasanter.ReplicaSync.Core/0.0.2": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "VehicleVision.Pleasanter.ReplicaSync.Infrastructure/0.0.1": {
+    "VehicleVision.Pleasanter.ReplicaSync.Infrastructure/0.0.2": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
