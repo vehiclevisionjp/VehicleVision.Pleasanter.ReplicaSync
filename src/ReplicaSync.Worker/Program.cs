@@ -1,17 +1,40 @@
+﻿using NLog;
+using NLog.Extensions.Logging;
 using ReplicaSync.Core.Enums;
 using ReplicaSync.Infrastructure.Extensions;
 using ReplicaSync.Worker;
 
-var builder = Host.CreateApplicationBuilder(args);
+// NLog の早期初期化（起動エラーも NLog でキャプチャ）
+var logger = LogManager.Setup()
+    .LoadConfigurationFromFile()
+    .GetCurrentClassLogger();
 
-// Get configuration for the config database
-var configDbConnection = builder.Configuration.GetConnectionString("ConfigDatabase")
-    ?? "Data Source=ReplicaSync.db";
-var configDbTypeStr = builder.Configuration.GetValue<string>("ConfigDatabaseType") ?? "SqlServer";
-var configDbType = Enum.Parse<DbmsType>(configDbTypeStr, ignoreCase: true);
+try
+{
+    var builder = Host.CreateApplicationBuilder(args);
 
-builder.Services.AddReplicaSyncInfrastructure(configDbConnection, configDbType);
-builder.Services.AddHostedService<SyncBackgroundService>();
+    // 既定のロギングプロバイダーをクリアし、NLog に一本化
+    builder.Logging.ClearProviders();
+    builder.Logging.AddNLog();
 
-var host = builder.Build();
-host.Run();
+    // Get configuration for the config database
+    var configDbConnection = builder.Configuration.GetConnectionString("ConfigDatabase")
+        ?? "Data Source=ReplicaSync.db";
+    var configDbTypeStr = builder.Configuration.GetValue<string>("ConfigDatabaseType") ?? "SqlServer";
+    var configDbType = Enum.Parse<DbmsType>(configDbTypeStr, ignoreCase: true);
+
+    builder.Services.AddReplicaSyncInfrastructure(configDbConnection, configDbType);
+    builder.Services.AddHostedService<SyncBackgroundService>();
+
+    var host = builder.Build();
+    host.Run();
+}
+catch (Exception ex)
+{
+    logger.Error(ex, "Application terminated unexpectedly.");
+    throw;
+}
+finally
+{
+    LogManager.Shutdown();
+}

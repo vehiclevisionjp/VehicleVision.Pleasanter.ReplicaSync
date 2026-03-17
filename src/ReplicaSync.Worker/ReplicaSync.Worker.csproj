@@ -9,10 +9,15 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.2" />
+    <PackageReference Include="NLog.Extensions.Hosting" Version="6.1.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ReplicaSync.Core\ReplicaSync.Core.csproj" />
     <ProjectReference Include="..\ReplicaSync.Infrastructure\ReplicaSync.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="nlog.config" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

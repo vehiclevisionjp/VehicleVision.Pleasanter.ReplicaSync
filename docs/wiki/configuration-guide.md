@@ -14,6 +14,11 @@
     - [基本カラム](#基本カラム)
     - [拡張カラム](#拡張カラム)
     - [指定例](#指定例)
+- [ロギング設定](#ロギング設定)
+    - [設定ファイル](#設定ファイル)
+    - [出力先（ターゲット）](#出力先ターゲット)
+    - [ログファイル](#ログファイル)
+    - [ログレベルの変更](#ログレベルの変更)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -129,3 +134,46 @@ ExcludeColumns:  DescriptionZ
 
 上記の場合、`ClassA` をキーとしてレコードを照合し、`Title`、`ClassA`、`ClassB`、`NumA` のみを同期対象とします。
 `ExcludeColumns` は `IncludeColumns` が未指定の場合に全カラムから除外するカラムを指定する際に使用します。
+
+## ロギング設定
+
+本プロジェクトでは [NLog](https://nlog-project.org/) を使用してロギングを行います。
+コンソール出力、デバッグコンソール出力、ファイル出力はすべて NLog 経由で統一されています。
+
+### 設定ファイル
+
+各プロジェクトのルートに `nlog.config` を配置しています。
+
+- `src/ReplicaSync.Worker/nlog.config` — Worker サービス用
+- `src/ReplicaSync.Web/nlog.config` — Web UI 用
+
+### 出力先（ターゲット）
+
+| ターゲット  | 説明                               |
+| ----------- | ---------------------------------- |
+| `console`   | コンソール出力（ColoredConsole）   |
+| `debugger`  | デバッグコンソール出力（Debugger） |
+| `file`      | 日付ローテーションのファイル出力   |
+| `errorFile` | Error 以上のログ専用ファイル出力   |
+
+### ログファイル
+
+ログファイルは実行ディレクトリの `logs/` フォルダに出力されます。
+
+```text
+logs/
+├── replicasync-worker-2026-03-17.log        # Worker 通常ログ
+├── replicasync-worker-error-2026-03-17.log  # Worker エラーログ
+├── replicasync-web-2026-03-17.log           # Web 通常ログ
+├── replicasync-web-error-2026-03-17.log     # Web エラーログ
+└── nlog-internal.log                        # NLog 内部ログ
+```
+
+### ログレベルの変更
+
+`nlog.config` の `<rules>` セクションで `minlevel` を変更することでログレベルを調整できます。
+
+```xml
+<!-- 例: Trace レベルまで出力 -->
+<logger name="*" minlevel="Trace" writeTo="console,debugger,file" />
+```
