@@ -26,9 +26,20 @@ public class AppUser
     /// <summary>Gets or sets whether the user must change their password at next login.</summary>
     public bool MustChangePassword { get; set; }
 
+    /// <summary>Gets or sets the number of consecutive failed login attempts.</summary>
+    public int FailedLoginCount { get; set; }
+
+    /// <summary>Gets or sets the UTC time until which the account is locked out. Null if not locked.</summary>
+    public DateTime? LockoutEndUtc { get; set; }
+
     /// <summary>Gets or sets the creation timestamp.</summary>
     public DateTime CreatedAt { get; set; }
 
     /// <summary>Gets or sets the last update timestamp.</summary>
     public DateTime UpdatedAt { get; set; }
+
+    /// <summary>
+    /// Returns whether the account is currently locked out.
+    /// </summary>
+    public bool IsLockedOut => LockoutEndUtc.HasValue && LockoutEndUtc.Value > DateTime.UtcNow;
 }

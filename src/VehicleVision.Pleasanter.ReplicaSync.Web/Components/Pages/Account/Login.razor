@@ -4,11 +4,13 @@
 @using Microsoft.AspNetCore.Authentication.Cookies
 @using VehicleVision.Pleasanter.ReplicaSync.Core.Interfaces
 @using VehicleVision.Pleasanter.ReplicaSync.Web.Security
+@using Microsoft.Extensions.Options
 @attribute [AllowAnonymous]
 @layout VehicleVision.Pleasanter.ReplicaSync.Web.Components.Layout.LoginLayout
 @inject IAppUserRepository UserRepo
 @inject NavigationManager Navigation
 @inject ILogger<Login> Logger
+@inject IOptions<SecuritySettings> SecurityOptions
 
 <PageTitle>ログイン - ReplicaSync</PageTitle>
 
@@ -65,13 +67,46 @@
             return;
         }
 
+        var lockoutSettings = SecurityOptions.Value.AccountLockout;
         var user = await UserRepo.GetByUsernameAsync(Username);
+
+        // Check if account is locked out
+        if (user is not null && lockoutSettings.Enabled && user.IsLockedOut)
+        {
+            Logger.LogWarning("ログイン失敗: ユーザー '{Username}' はロックアウト中です（解除: {LockoutEnd}）",
+                Username, user.LockoutEndUtc);
+            _errorMessage = "アカウントがロックされています。しばらくしてから再試行してください。";
+            return;
+        }
 
         if (user is null || !PasswordHasher.VerifyPassword(Password, user.PasswordHash))
         {
             Logger.LogWarning("ログイン失敗: ユーザー '{Username}'", Username);
+
+            // Record failed attempt and potentially lock the account
+            if (user is not null && lockoutSettings.Enabled)
+            {
+                await UserRepo.RecordFailedLoginAsync(user.Id);
+
+                if (user.FailedLoginCount + 1 >= lockoutSettings.MaxFailedAttempts)
+                {
+                    var lockoutEnd = DateTime.UtcNow.AddMinutes(lockoutSettings.LockoutDurationMinutes);
+                    await UserRepo.LockoutUserAsync(user.Id, lockoutEnd);
+                    Logger.LogWarning("アカウントロックアウト: ユーザー '{Username}'（{Duration}分間）",
+                        Username, lockoutSettings.LockoutDurationMinutes);
+                    _errorMessage = "アカウントがロックされています。しばらくしてから再試行してください。";
+                    return;
+                }
+            }
+
             _errorMessage = "ユーザーIDまたはパスワードが正しくありません。";
             return;
+        }
+
+        // Successful login: reset failed attempts
+        if (lockoutSettings.Enabled && user.FailedLoginCount > 0)
+        {
+            await UserRepo.ResetFailedLoginCountAsync(user.Id);
         }
 
         var claims = new List<Claim>
