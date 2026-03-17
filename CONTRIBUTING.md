@@ -73,11 +73,11 @@ npm install
 ### ソースモードでの起動
 
 ```bash
-# Web UI を起動
-dotnet run --project src/VehicleVision.Pleasanter.ReplicaSync.Web
-
 # Worker サービスを起動
 dotnet run --project src/VehicleVision.Pleasanter.ReplicaSync.Worker
+
+# Web UI を起動
+dotnet run --project src/VehicleVision.Pleasanter.ReplicaSync.Web
 
 # デスクトップアプリを起動（Web サーバ不要）
 dotnet run --project src/VehicleVision.Pleasanter.ReplicaSync.Desktop
