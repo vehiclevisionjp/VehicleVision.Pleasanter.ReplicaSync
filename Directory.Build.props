@@ -24,7 +24,7 @@
 
   <PropertyGroup>
     <!-- NuGet パッケージメタデータ -->
-    <Version>0.0.2</Version>
+    <Version>0.0.3</Version>
     <Authors>VehicleVision</Authors>
     <Company>VehicleVision</Company>
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
