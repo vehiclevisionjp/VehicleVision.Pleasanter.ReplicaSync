@@ -25,12 +25,12 @@
 
 ### テストプロジェクト構成
 
-| 項目                     | 内容                                                                                    |
-| ------------------------ | --------------------------------------------------------------------------------------- |
-| プロジェクト名           | `ReplicaSync.Core.Tests` / `ReplicaSync.Infrastructure.Tests` / `ReplicaSync.Web.Tests` |
-| テストフレームワーク     | xUnit                                                                                   |
-| ターゲットフレームワーク | .NET 10                                                                                 |
-| カバレッジツール         | coverlet.collector                                                                      |
+| 項目                     | 内容                                                                                                            |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| プロジェクト名           | `ReplicaSync.Core.Tests` / `ReplicaSync.Infrastructure.Tests` / `ReplicaSync.Web.Tests` / `ReplicaSync.Web.E2E` |
+| テストフレームワーク     | xUnit                                                                                                           |
+| ターゲットフレームワーク | .NET 10                                                                                                         |
+| カバレッジツール         | coverlet.collector                                                                                              |
 
 ### ディレクトリ構造
 
@@ -61,6 +61,10 @@ ReplicaSync.Web.Tests/
     ├── PasswordHasherTests.cs
     ├── IpWhitelistMiddlewareTests.cs
     └── MustChangePasswordMiddlewareTests.cs
+
+ReplicaSync.Web.E2E/
+├── ReplicaSync.Web.E2E.csproj
+└── ScreenshotTests.cs          # Playwright によるスクリーンショット自動取得
 ```
 
 ---

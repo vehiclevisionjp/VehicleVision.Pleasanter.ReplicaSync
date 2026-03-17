@@ -80,7 +80,8 @@ local.config.json
 *.sap
 
 # Visual Studio Trace Files
-*.e2e
+*.[Ee]2[Ee]
+!*.[Ee]2[Ee]/
 
 # ReSharper
 _ReSharper*/

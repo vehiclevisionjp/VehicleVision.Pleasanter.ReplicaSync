@@ -25,12 +25,12 @@
                     <AntiforgeryToken />
                     <div class="mb-3">
                         <label for="username" class="form-label">ユーザーID</label>
-                        <input type="text" class="form-control" id="username" name="Username" @bind="_username" required
+                        <input type="text" class="form-control" id="username" name="Username" value="@Username" required
                                autocomplete="username" />
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">パスワード</label>
-                        <input type="password" class="form-control" id="password" name="Password" @bind="_password"
+                        <input type="password" class="form-control" id="password" name="Password" value="@Password"
                                required autocomplete="current-password" />
                     </div>
                     <button type="submit" class="btn btn-primary w-100">ログイン</button>
@@ -41,8 +41,12 @@
 </div>
 
 @code {
-    private string _username = string.Empty;
-    private string _password = string.Empty;
+    [SupplyParameterFromForm]
+    private string Username { get; set; } = string.Empty;
+
+    [SupplyParameterFromForm]
+    private string Password { get; set; } = string.Empty;
+
     private string? _errorMessage;
 
     [CascadingParameter]
@@ -55,29 +59,29 @@
             return;
         }
 
-        var user = await UserRepo.GetByUsernameAsync(_username);
+        var user = await UserRepo.GetByUsernameAsync(Username);
 
-        if (user is null || !PasswordHasher.VerifyPassword(_password, user.PasswordHash))
+        if (user is null || !PasswordHasher.VerifyPassword(Password, user.PasswordHash))
         {
-            Logger.LogWarning("ログイン失敗: ユーザー '{Username}'", _username);
+            Logger.LogWarning("ログイン失敗: ユーザー '{Username}'", Username);
             _errorMessage = "ユーザーIDまたはパスワードが正しくありません。";
             return;
         }
 
         var claims = new List<Claim>
-{
-new(ClaimTypes.Name, user.Username),
-new(ClaimTypes.Role, user.Role.ToString()),
-new(ClaimTypes.AuthenticationMethod, "Cookie"),
-new("MustChangePassword", user.MustChangePassword.ToString()),
-};
+        {
+            new(ClaimTypes.Name, user.Username),
+            new(ClaimTypes.Role, user.Role.ToString()),
+            new(ClaimTypes.AuthenticationMethod, "Cookie"),
+            new("MustChangePassword", user.MustChangePassword.ToString()),
+        };
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var principal = new ClaimsPrincipal(identity);
 
         await HttpContext.SignInAsync(
-        CookieAuthenticationDefaults.AuthenticationScheme,
-        principal);
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            principal);
 
         Logger.LogInformation("ログイン成功: ユーザー '{Username}'", user.Username);
 

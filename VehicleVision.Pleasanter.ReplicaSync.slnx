@@ -9,5 +9,6 @@
     <Project Path="tests/ReplicaSync.Core.Tests/ReplicaSync.Core.Tests.csproj" />
     <Project Path="tests/ReplicaSync.Infrastructure.Tests/ReplicaSync.Infrastructure.Tests.csproj" />
     <Project Path="tests/ReplicaSync.Web.Tests/ReplicaSync.Web.Tests.csproj" />
+    <Project Path="tests/ReplicaSync.Web.E2E/ReplicaSync.Web.E2E.csproj" />
   </Folder>
 </Solution>

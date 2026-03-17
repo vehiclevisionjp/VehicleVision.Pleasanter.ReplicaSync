@@ -12,20 +12,19 @@ Hub-Spoke / Peer-to-Peer トポロジ、複数の競合解決戦略、マルチD
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [VehicleVision.Pleasanter.ReplicaSync](#vehiclevisionpleasanterreplicasync)
-    - [主な機能](#主な機能)
-    - [セットアップ](#セットアップ)
-        - [前提条件](#前提条件)
-        - [クローン](#クローン)
-        - [ビルド](#ビルド)
-            - [ドキュメントツールのセットアップ（任意）](#ドキュメントツールのセットアップ任意)
-    - [使用方法](#使用方法)
-        - [Worker サービスの起動](#worker-サービスの起動)
-        - [Web UI の起動](#web-ui-の起動)
-    - [ドキュメント](#ドキュメント)
-    - [サードパーティライセンス](#サードパーティライセンス)
-    - [セキュリティ](#セキュリティ)
-    - [謝辞](#謝辞)
+- [主な機能](#主な機能)
+- [セットアップ](#セットアップ)
+    - [前提条件](#前提条件)
+    - [クローン](#クローン)
+    - [ビルド](#ビルド)
+- [使用方法](#使用方法)
+    - [Worker サービスの起動](#worker-サービスの起動)
+    - [Web UI の起動](#web-ui-の起動)
+- [ドキュメント](#ドキュメント)
+- [NuGet パッケージ](#nuget-パッケージ)
+- [サードパーティライセンス](#サードパーティライセンス)
+- [セキュリティ](#セキュリティ)
+- [謝辞](#謝辞)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

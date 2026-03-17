@@ -298,21 +298,21 @@ erDiagram
 
 同期処理でレコードが上書きされる前の状態を保存するバージョン履歴。保持ポリシーにより版数・日数で自動クリーンアップされます。
 
-| カラム名             | 型         | 必須 | 最大長 | 説明                                               |
-| -------------------- | ---------- | ---- | ------ | -------------------------------------------------- |
-| `Id`                 | `long`     | Yes  | -      | 主キー（自動採番）                                 |
-| `SyncId`             | `string`   | Yes  | 100    | 同期定義 ID                                        |
-| `InstanceId`         | `string`   | Yes  | 100    | スナップショット取得先インスタンス ID              |
-| `SiteId`             | `long`     | -    | -      | Pleasanter サイト ID                               |
-| `RecordId`           | `long`     | -    | -      | Pleasanter レコード ID（ResultId / IssueId）       |
-| `VersionNumber`      | `int`      | -    | -      | レコード単位の連番（1 始まり）                     |
-| `Title`              | `string`   | -    | 2048   | スナップショット時点のタイトル                     |
-| `Body`               | `string`   | -    | -      | スナップショット時点の本文                         |
-| `ColumnSnapshotJson` | `string`   | -    | -      | カラム値の JSON スナップショット                   |
-| `ChangedBy`          | `int`      | -    | -      | スナップショット時点の最終更新 Pleasanter ユーザー |
-| `ChangedAt`          | `datetime` | -    | -      | スナップショット時点のレコード更新日時             |
-| `IsDeleteSnapshot`   | `bool`     | -    | -      | 削除前スナップショット（`true`）か更新前（`false`）|
-| `CreatedAt`          | `datetime` | -    | -      | 履歴エントリ作成日時（UTC）                        |
+| カラム名             | 型         | 必須 | 最大長 | 説明                                                |
+| -------------------- | ---------- | ---- | ------ | --------------------------------------------------- |
+| `Id`                 | `long`     | Yes  | -      | 主キー（自動採番）                                  |
+| `SyncId`             | `string`   | Yes  | 100    | 同期定義 ID                                         |
+| `InstanceId`         | `string`   | Yes  | 100    | スナップショット取得先インスタンス ID               |
+| `SiteId`             | `long`     | -    | -      | Pleasanter サイト ID                                |
+| `RecordId`           | `long`     | -    | -      | Pleasanter レコード ID（ResultId / IssueId）        |
+| `VersionNumber`      | `int`      | -    | -      | レコード単位の連番（1 始まり）                      |
+| `Title`              | `string`   | -    | 2048   | スナップショット時点のタイトル                      |
+| `Body`               | `string`   | -    | -      | スナップショット時点の本文                          |
+| `ColumnSnapshotJson` | `string`   | -    | -      | カラム値の JSON スナップショット                    |
+| `ChangedBy`          | `int`      | -    | -      | スナップショット時点の最終更新 Pleasanter ユーザー  |
+| `ChangedAt`          | `datetime` | -    | -      | スナップショット時点のレコード更新日時              |
+| `IsDeleteSnapshot`   | `bool`     | -    | -      | 削除前スナップショット（`true`）か更新前（`false`） |
+| `CreatedAt`          | `datetime` | -    | -      | 履歴エントリ作成日時（UTC）                         |
 
 **インデックス:**
 
