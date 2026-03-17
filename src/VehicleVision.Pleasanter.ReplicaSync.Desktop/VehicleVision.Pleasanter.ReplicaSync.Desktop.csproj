@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VehicleVision.Pleasanter.ReplicaSync.Core\VehicleVision.Pleasanter.ReplicaSync.Core.csproj" />
+    <ProjectReference Include="..\VehicleVision.Pleasanter.ReplicaSync.Infrastructure\VehicleVision.Pleasanter.ReplicaSync.Infrastructure.csproj" />
+    <ProjectReference Include="..\VehicleVision.Pleasanter.ReplicaSync.Web\VehicleVision.Pleasanter.ReplicaSync.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog.Web.AspNetCore" Version="6.1.2" />
+    <PackageReference Include="Photino.NET" Version="4.0.16" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="nlog.config" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/VehicleVision.Pleasanter.ReplicaSync.Core/VehicleVision.Pleasanter.ReplicaSync.Core.csproj" />
+    <Project Path="src/VehicleVision.Pleasanter.ReplicaSync.Desktop/VehicleVision.Pleasanter.ReplicaSync.Desktop.csproj" />
     <Project Path="src/VehicleVision.Pleasanter.ReplicaSync.Infrastructure/VehicleVision.Pleasanter.ReplicaSync.Infrastructure.csproj" />
     <Project Path="src/VehicleVision.Pleasanter.ReplicaSync.Web/VehicleVision.Pleasanter.ReplicaSync.Web.csproj" />
     <Project Path="src/VehicleVision.Pleasanter.ReplicaSync.Worker/VehicleVision.Pleasanter.ReplicaSync.Worker.csproj" />
