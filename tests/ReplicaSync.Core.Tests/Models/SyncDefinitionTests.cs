@@ -183,5 +183,38 @@ public class SyncDefinitionTests
         Assert.False(definition.AttachmentsEnabled);
         Assert.Equal("Rds", definition.AttachmentsStorageType);
         Assert.Empty(definition.TargetMappings);
+        Assert.True(definition.VersionHistoryEnabled);
+        Assert.Equal(20, definition.VersionHistoryMaxVersions);
+        Assert.Equal(180, definition.VersionHistoryMaxDays);
+    }
+
+    [Fact]
+    public void VersionHistoryMaxVersionsShouldBeNullableForUnlimited()
+    {
+        // Arrange & Act
+        var definition = new SyncDefinition { VersionHistoryMaxVersions = null };
+
+        // Assert
+        Assert.Null(definition.VersionHistoryMaxVersions);
+    }
+
+    [Fact]
+    public void VersionHistoryMaxDaysShouldBeNullableForUnlimited()
+    {
+        // Arrange & Act
+        var definition = new SyncDefinition { VersionHistoryMaxDays = null };
+
+        // Assert
+        Assert.Null(definition.VersionHistoryMaxDays);
+    }
+
+    [Fact]
+    public void VersionHistoryCanBeDisabled()
+    {
+        // Arrange & Act
+        var definition = new SyncDefinition { VersionHistoryEnabled = false };
+
+        // Assert
+        Assert.False(definition.VersionHistoryEnabled);
     }
 }

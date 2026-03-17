@@ -76,26 +76,29 @@ ConnectionString: Server=localhost;Database=Implem.Pleasanter;Trusted_Connection
 
 データ同期のルールを定義します。
 
-| プロパティ               | 型                           | 説明                                             |
-| ------------------------ | ---------------------------- | ------------------------------------------------ |
-| `SyncId`                 | `string`                     | 同期定義の一意識別子                             |
-| `Description`            | `string`                     | 説明                                             |
-| `Topology`               | `TopologyType`               | `HubSpoke` または `PeerToPeer`                   |
-| `ConflictResolution`     | `ConflictResolutionStrategy` | 競合解決戦略                                     |
-| `ChangeDetectionMethod`  | `ChangeDetectionMethod`      | 変更検出方法（現在は `Polling` のみ）            |
-| `PollingIntervalSeconds` | `int`                        | ポーリング間隔（1～3600秒）                      |
-| `SyncUserId`             | `int`                        | 同期に使用する Pleasanter ユーザーID             |
-| `SyncUserName`           | `string`                     | 同期ユーザーの表示名                             |
-| `SourceInstanceId`       | `int`                        | ソースインスタンスの ID                          |
-| `SourceSiteId`           | `long`                       | ソース Pleasanter サイト ID                      |
-| `IsEnabled`              | `bool`                       | 同期定義の有効/無効                              |
-| `SyncKeyColumns`         | `string`                     | 同期キーカラム（カンマ区切り）                   |
-| `IncludeColumns`         | `string`                     | 同期対象カラム（カンマ区切り、省略時は全カラム） |
-| `ExcludeColumns`         | `string`                     | 同期除外カラム（カンマ区切り）                   |
-| `RecordFilterInclude`    | `string?`                    | レコードフィルタ（含む条件、JSON）               |
-| `RecordFilterExclude`    | `string?`                    | レコードフィルタ（除外条件、JSON）               |
-| `AttachmentsEnabled`     | `bool`                       | 添付ファイル同期の有効/無効                      |
-| `AttachmentsStorageType` | `string`                     | 添付ファイルの保存方式（`Rds` のみ対応）         |
+| プロパティ                  | 型                           | 説明                                             |
+| --------------------------- | ---------------------------- | ------------------------------------------------ |
+| `SyncId`                    | `string`                     | 同期定義の一意識別子                             |
+| `Description`               | `string`                     | 説明                                             |
+| `Topology`                  | `TopologyType`               | `HubSpoke` または `PeerToPeer`                   |
+| `ConflictResolution`        | `ConflictResolutionStrategy` | 競合解決戦略                                     |
+| `ChangeDetectionMethod`     | `ChangeDetectionMethod`      | 変更検出方法（現在は `Polling` のみ）            |
+| `PollingIntervalSeconds`    | `int`                        | ポーリング間隔（1～3600秒）                      |
+| `SyncUserId`                | `int`                        | 同期に使用する Pleasanter ユーザーID             |
+| `SyncUserName`              | `string`                     | 同期ユーザーの表示名                             |
+| `SourceInstanceId`          | `int`                        | ソースインスタンスの ID                          |
+| `SourceSiteId`              | `long`                       | ソース Pleasanter サイト ID                      |
+| `IsEnabled`                 | `bool`                       | 同期定義の有効/無効                              |
+| `SyncKeyColumns`            | `string`                     | 同期キーカラム（カンマ区切り）                   |
+| `IncludeColumns`            | `string`                     | 同期対象カラム（カンマ区切り、省略時は全カラム） |
+| `ExcludeColumns`            | `string`                     | 同期除外カラム（カンマ区切り）                   |
+| `RecordFilterInclude`       | `string?`                    | レコードフィルタ（含む条件、JSON）               |
+| `RecordFilterExclude`       | `string?`                    | レコードフィルタ（除外条件、JSON）               |
+| `AttachmentsEnabled`        | `bool`                       | 添付ファイル同期の有効/無効                      |
+| `AttachmentsStorageType`    | `string`                     | 添付ファイルの保存方式（`Rds` のみ対応）         |
+| `VersionHistoryEnabled`     | `bool`                       | バージョン履歴の有効/無効（既定: `true`）        |
+| `VersionHistoryMaxVersions` | `int?`                       | 最大保持版数（`null` = 無制限、既定: 20）        |
+| `VersionHistoryMaxDays`     | `int?`                       | 最大保持日数（`null` = 無制限、既定: 180）       |
 
 ## ターゲットマッピング（SyncTargetMapping）
 

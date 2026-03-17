@@ -30,6 +30,9 @@ public class AppDbContext : DbContext
     /// <summary>Gets the application users.</summary>
     public DbSet<AppUser> AppUsers => Set<AppUser>();
 
+    /// <summary>Gets the record version history entries.</summary>
+    public DbSet<RecordVersionHistory> RecordVersionHistories => Set<RecordVersionHistory>();
+
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -106,6 +109,18 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Username).IsRequired().HasMaxLength(100);
             entity.Property(e => e.PasswordHash).IsRequired();
             entity.Property(e => e.Role).HasConversion<string>().HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<RecordVersionHistory>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.SyncId, e.InstanceId, e.SiteId, e.RecordId, e.VersionNumber })
+                .IsUnique();
+            entity.HasIndex(e => new { e.SyncId, e.CreatedAt });
+            entity.Property(e => e.SyncId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.InstanceId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Title).HasMaxLength(2048);
+            entity.Property(e => e.ColumnSnapshotJson);
         });
     }
 }

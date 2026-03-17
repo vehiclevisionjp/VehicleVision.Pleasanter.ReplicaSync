@@ -42,10 +42,12 @@ ReplicaSync.Core.Tests/
 ├── Models/
 │   ├── AppUserTests.cs
 │   ├── PleasanterRecordTests.cs
+│   ├── RecordVersionHistoryTests.cs
 │   ├── SyncDefinitionTests.cs
 │   └── SyncTargetMappingTests.cs
 └── Services/
-    └── SyncRuleEngineTests.cs
+    ├── SyncRuleEngineTests.cs
+    └── VersionHistoryServiceTests.cs
 
 ReplicaSync.Infrastructure.Tests/
 ├── ReplicaSync.Infrastructure.Tests.csproj

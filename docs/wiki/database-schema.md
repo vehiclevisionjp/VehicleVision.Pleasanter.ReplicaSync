@@ -13,6 +13,7 @@
     - [SyncDefinitions](#syncdefinitions)
     - [SyncTargetMappings](#synctargetmappings)
     - [SyncLogEntries](#synclogentries)
+    - [RecordVersionHistories](#recordversionhistories)
 - [列挙型の格納値](#列挙型の格納値)
     - [TopologyType](#topologytype)
     - [ConflictResolutionStrategy](#conflictresolutionstrategy)
@@ -88,6 +89,9 @@ erDiagram
         string RecordFilterExclude
         bool AttachmentsEnabled
         string AttachmentsStorageType
+        bool VersionHistoryEnabled
+        int VersionHistoryMaxVersions
+        int VersionHistoryMaxDays
         datetime CreatedAt
         datetime UpdatedAt
     }
@@ -119,6 +123,21 @@ erDiagram
         string ErrorMessage
         datetime StartedAt
         datetime CompletedAt
+    }
+
+    RecordVersionHistories {
+        long Id PK
+        string SyncId
+        string InstanceId
+        long SiteId
+        long RecordId
+        int VersionNumber
+        string Title
+        string Body
+        string ColumnSnapshotJson
+        int ChangedBy
+        datetime ChangedAt
+        datetime CreatedAt
     }
 ```
 
@@ -176,29 +195,32 @@ erDiagram
 
 データ同期のルール定義。
 
-| カラム名                 | 型         | 必須 | 最大長 | 説明                                             |
-| ------------------------ | ---------- | ---- | ------ | ------------------------------------------------ |
-| `Id`                     | `int`      | Yes  | -      | 主キー（自動採番）                               |
-| `SyncId`                 | `string`   | Yes  | 100    | 同期定義識別子（ユニーク）                       |
-| `Description`            | `string`   | -    | 500    | 説明                                             |
-| `Topology`               | `string`   | -    | 50     | トポロジー（`HubSpoke` / `PeerToPeer`）          |
-| `ConflictResolution`     | `string`   | -    | 50     | 競合解決戦略（後述）                             |
-| `ChangeDetectionMethod`  | `string`   | -    | 50     | 変更検出方法（現在は `Polling` のみ）            |
-| `PollingIntervalSeconds` | `int`      | -    | -      | ポーリング間隔（1～3600 秒、既定: 5）            |
-| `SyncUserId`             | `int`      | -    | -      | 同期操作に使用する Pleasanter ユーザー ID        |
-| `SyncUserName`           | `string`   | -    | 100    | 同期ユーザーの表示名                             |
-| `SourceInstanceId`       | `int`      | -    | -      | ソースインスタンス ID（FK → `SyncInstances.Id`） |
-| `SourceSiteId`           | `long`     | -    | -      | ソース Pleasanter サイト ID                      |
-| `IsEnabled`              | `bool`     | -    | -      | 有効/無効（既定: `true`）                        |
-| `SyncKeyColumns`         | `string`   | Yes  | 500    | 同期キーカラム（カンマ区切り）                   |
-| `IncludeColumns`         | `string`   | -    | 2000   | 同期対象カラム（カンマ区切り）                   |
-| `ExcludeColumns`         | `string`   | -    | 2000   | 同期除外カラム（カンマ区切り）                   |
-| `RecordFilterInclude`    | `string`   | -    | 4000   | レコードフィルタ（含む条件、JSON）               |
-| `RecordFilterExclude`    | `string`   | -    | 4000   | レコードフィルタ（除外条件、JSON）               |
-| `AttachmentsEnabled`     | `bool`     | -    | -      | 添付ファイル同期の有効/無効                      |
-| `AttachmentsStorageType` | `string`   | -    | 50     | 添付ファイル保存方式（既定: `Rds`）              |
-| `CreatedAt`              | `datetime` | -    | -      | 作成日時（UTC）                                  |
-| `UpdatedAt`              | `datetime` | -    | -      | 更新日時（UTC）                                  |
+| カラム名                    | 型         | 必須 | 最大長 | 説明                                             |
+| --------------------------- | ---------- | ---- | ------ | ------------------------------------------------ |
+| `Id`                        | `int`      | Yes  | -      | 主キー（自動採番）                               |
+| `SyncId`                    | `string`   | Yes  | 100    | 同期定義識別子（ユニーク）                       |
+| `Description`               | `string`   | -    | 500    | 説明                                             |
+| `Topology`                  | `string`   | -    | 50     | トポロジー（`HubSpoke` / `PeerToPeer`）          |
+| `ConflictResolution`        | `string`   | -    | 50     | 競合解決戦略（後述）                             |
+| `ChangeDetectionMethod`     | `string`   | -    | 50     | 変更検出方法（現在は `Polling` のみ）            |
+| `PollingIntervalSeconds`    | `int`      | -    | -      | ポーリング間隔（1～3600 秒、既定: 5）            |
+| `SyncUserId`                | `int`      | -    | -      | 同期操作に使用する Pleasanter ユーザー ID        |
+| `SyncUserName`              | `string`   | -    | 100    | 同期ユーザーの表示名                             |
+| `SourceInstanceId`          | `int`      | -    | -      | ソースインスタンス ID（FK → `SyncInstances.Id`） |
+| `SourceSiteId`              | `long`     | -    | -      | ソース Pleasanter サイト ID                      |
+| `IsEnabled`                 | `bool`     | -    | -      | 有効/無効（既定: `true`）                        |
+| `SyncKeyColumns`            | `string`   | Yes  | 500    | 同期キーカラム（カンマ区切り）                   |
+| `IncludeColumns`            | `string`   | -    | 2000   | 同期対象カラム（カンマ区切り）                   |
+| `ExcludeColumns`            | `string`   | -    | 2000   | 同期除外カラム（カンマ区切り）                   |
+| `RecordFilterInclude`       | `string`   | -    | 4000   | レコードフィルタ（含む条件、JSON）               |
+| `RecordFilterExclude`       | `string`   | -    | 4000   | レコードフィルタ（除外条件、JSON）               |
+| `AttachmentsEnabled`        | `bool`     | -    | -      | 添付ファイル同期の有効/無効                      |
+| `AttachmentsStorageType`    | `string`   | -    | 50     | 添付ファイル保存方式（既定: `Rds`）              |
+| `VersionHistoryEnabled`     | `bool`     | -    | -      | バージョン履歴の有効/無効（既定: `true`）        |
+| `VersionHistoryMaxVersions` | `int?`     | -    | -      | 最大保持版数（`null` = 無制限、既定: 20）        |
+| `VersionHistoryMaxDays`     | `int?`     | -    | -      | 最大保持日数（`null` = 無制限、既定: 180）       |
+| `CreatedAt`                 | `datetime` | -    | -      | 作成日時（UTC）                                  |
+| `UpdatedAt`                 | `datetime` | -    | -      | 更新日時（UTC）                                  |
 
 **インデックス:**
 
@@ -268,6 +290,41 @@ erDiagram
 | PK           | `Id`        | 主キー     |
 | IX_SyncId    | `SyncId`    | 非ユニーク |
 | IX_StartedAt | `StartedAt` | 非ユニーク |
+
+---
+
+### RecordVersionHistories
+
+同期処理でレコードが上書きされる前の状態を保存するバージョン履歴。保持ポリシーにより版数・日数で自動クリーンアップされます。
+
+| カラム名             | 型         | 必須 | 最大長 | 説明                                               |
+| -------------------- | ---------- | ---- | ------ | -------------------------------------------------- |
+| `Id`                 | `long`     | Yes  | -      | 主キー（自動採番）                                 |
+| `SyncId`             | `string`   | Yes  | 100    | 同期定義 ID                                        |
+| `InstanceId`         | `string`   | Yes  | 100    | スナップショット取得先インスタンス ID              |
+| `SiteId`             | `long`     | -    | -      | Pleasanter サイト ID                               |
+| `RecordId`           | `long`     | -    | -      | Pleasanter レコード ID（ResultId / IssueId）       |
+| `VersionNumber`      | `int`      | -    | -      | レコード単位の連番（1 始まり）                     |
+| `Title`              | `string`   | -    | 2048   | スナップショット時点のタイトル                     |
+| `Body`               | `string`   | -    | -      | スナップショット時点の本文                         |
+| `ColumnSnapshotJson` | `string`   | -    | -      | カラム値の JSON スナップショット                   |
+| `ChangedBy`          | `int`      | -    | -      | スナップショット時点の最終更新 Pleasanter ユーザー |
+| `ChangedAt`          | `datetime` | -    | -      | スナップショット時点のレコード更新日時             |
+| `CreatedAt`          | `datetime` | -    | -      | 履歴エントリ作成日時（UTC）                        |
+
+**インデックス:**
+
+| 名前                       | カラム                                                        | 種別       |
+| -------------------------- | ------------------------------------------------------------- | ---------- |
+| PK                         | `Id`                                                          | 主キー     |
+| IX_Record_Version (UNIQUE) | `SyncId`, `InstanceId`, `SiteId`, `RecordId`, `VersionNumber` | ユニーク   |
+| IX_SyncId_CreatedAt        | `SyncId`, `CreatedAt`                                         | 非ユニーク |
+
+**保持ポリシー:**
+
+同期定義の `VersionHistoryMaxVersions` と `VersionHistoryMaxDays` で制御されます。
+両方の条件が設定されている場合、**いずれか早いほう**で削除されます（既定: 20 版 or 180 日）。
+`null` を設定するとその条件は無制限になります。両方 `null` の場合は履歴が無制限に保持されます。
 
 ---
 

@@ -89,6 +89,23 @@ public class SyncDefinition
     /// <summary>Gets or sets the last update timestamp.</summary>
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
+    /// <summary>Gets or sets whether version history is enabled for this sync definition.</summary>
+    public bool VersionHistoryEnabled { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the maximum number of versions to retain per record.
+    /// When null, no version count limit is applied. Default is 20.
+    /// </summary>
+    [Range(1, int.MaxValue)]
+    public int? VersionHistoryMaxVersions { get; set; } = 20;
+
+    /// <summary>
+    /// Gets or sets the maximum number of days to retain version history.
+    /// When null, no age limit is applied. Default is 180 days.
+    /// </summary>
+    [Range(1, int.MaxValue)]
+    public int? VersionHistoryMaxDays { get; set; } = 180;
+
     /// <summary>
     /// Gets the sync key column names as a list.
     /// </summary>

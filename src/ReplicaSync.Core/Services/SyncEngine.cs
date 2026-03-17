@@ -13,6 +13,7 @@ public class SyncEngine : ISyncEngine
 {
     private readonly IPleasanterDbAccess _dbAccess;
     private readonly ISyncConfigRepository _configRepository;
+    private readonly VersionHistoryService _versionHistoryService;
     private readonly ILogger<SyncEngine> _logger;
     private readonly ConcurrentDictionary<string, DateTime> _lastSyncTimes = new();
 
@@ -22,14 +23,17 @@ public class SyncEngine : ISyncEngine
     public SyncEngine(
         IPleasanterDbAccess dbAccess,
         ISyncConfigRepository configRepository,
+        VersionHistoryService versionHistoryService,
         ILogger<SyncEngine> logger)
     {
         ArgumentNullException.ThrowIfNull(dbAccess);
         ArgumentNullException.ThrowIfNull(configRepository);
+        ArgumentNullException.ThrowIfNull(versionHistoryService);
         ArgumentNullException.ThrowIfNull(logger);
 
         _dbAccess = dbAccess;
         _configRepository = configRepository;
+        _versionHistoryService = versionHistoryService;
         _logger = logger;
     }
 
@@ -138,6 +142,15 @@ public class SyncEngine : ISyncEngine
                             }
                         }
 
+                        // Capture version history snapshot before overwriting
+                        if (existingTarget is not null)
+                        {
+                            await _versionHistoryService.CaptureSnapshotAsync(
+                                definition, target.InstanceId,
+                                targetMapping.TargetSiteId, existingTarget,
+                                cancellationToken).ConfigureAwait(false);
+                        }
+
                         await _dbAccess.UpsertRecordAsync(
                             target.ConnectionString, target.DbmsType,
                             targetMapping.TargetSiteId, referenceType,
@@ -152,6 +165,12 @@ public class SyncEngine : ISyncEngine
                         else
                         {
                             logEntry.RecordsUpdated++;
+
+                            // Apply per-record version count retention
+                            await _versionHistoryService.ApplyRetentionForRecordAsync(
+                                definition, target.InstanceId,
+                                targetMapping.TargetSiteId, existingTarget.RecordId,
+                                cancellationToken).ConfigureAwait(false);
                         }
 
                         logEntry.RecordsProcessed++;
@@ -210,6 +229,9 @@ public class SyncEngine : ISyncEngine
             }
 
             _lastSyncTimes.AddOrUpdate(lastSyncKey, DateTime.UtcNow, (_, _) => DateTime.UtcNow);
+
+            // Apply time-based retention cleanup
+            await _versionHistoryService.ApplyTimeBasedRetentionAsync(definition, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
