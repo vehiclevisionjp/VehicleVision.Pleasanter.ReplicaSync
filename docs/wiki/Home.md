@@ -24,6 +24,7 @@ VehicleVision.Pleasanter.ReplicaSync のドキュメントへようこそ。
 
 - [アーキテクチャ概要](architecture-overview.md) - システム構成、レイヤー構造、データフロー
 - [設定ガイド](configuration-guide.md) - 同期インスタンス・定義の設定方法
+- [データベース構造](database-schema.md) - 構成データベースのテーブル定義・ER 図
 - [同期エンジン](sync-engine.md) - 同期処理の仕組みと競合解決戦略
 
 ## 関連リンク

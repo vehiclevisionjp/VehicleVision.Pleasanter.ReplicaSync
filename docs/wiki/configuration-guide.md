@@ -19,6 +19,10 @@
     - [出力先（ターゲット）](#出力先ターゲット)
     - [ログファイル](#ログファイル)
     - [ログレベルの変更](#ログレベルの変更)
+- [セキュリティ設定](#セキュリティ設定)
+    - [ユーザー認証（Cookie 認証）](#ユーザー認証cookie-認証)
+    - [API キー認証](#api-キー認証)
+    - [IP アドレス制限](#ip-アドレス制限)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -177,3 +181,91 @@ logs/
 <!-- 例: Trace レベルまで出力 -->
 <logger name="*" minlevel="Trace" writeTo="console,debugger,file" />
 ```
+
+## セキュリティ設定
+
+管理 Web アプリケーションのセキュリティは `appsettings.json` の `Security` セクションで設定します。
+
+```json
+{
+    "Security": {
+        "InitialAdminUsername": "administrator",
+        "InitialAdminPassword": "vehiclevision",
+        "ApiKeys": [
+            {
+                "Name": "worker-service",
+                "Key": "<APIキー>"
+            }
+        ],
+        "IpWhitelist": {
+            "Enabled": false,
+            "AllowedAddresses": ["127.0.0.1", "::1"]
+        }
+    }
+}
+```
+
+### ユーザー認証（Cookie 認証）
+
+Web UI へのアクセスはユーザー ID / パスワードによる Cookie 認証で保護されています。
+ユーザー情報は構成データベースの `AppUsers` テーブルで管理されます。
+
+#### 初期ユーザー
+
+アプリケーション初回起動時に、ユーザーが存在しない場合は以下の設定で初期管理者が自動作成されます。
+
+| 設定項目               | 既定値          | 説明                    |
+| ---------------------- | --------------- | ----------------------- |
+| `InitialAdminUsername` | `administrator` | 初期管理者のユーザー ID |
+| `InitialAdminPassword` | `vehiclevision` | 初期管理者のパスワード  |
+
+初期ユーザーは `MustChangePassword` フラグが有効な状態で作成されるため、**初回ログイン時にパスワード変更が強制**されます。
+
+> **注意**: 本番環境では `InitialAdminPassword` を安全な値に変更した上でデプロイしてください。初期ユーザー作成後は設定値から削除しても問題ありません。
+
+#### パスワード保存方式
+
+| パラメータ   | 値                                                              |
+| ------------ | --------------------------------------------------------------- |
+| アルゴリズム | PBKDF2 + SHA-256                                                |
+| 反復回数     | 100,000                                                         |
+| ソルト長     | 16 バイト（ランダム生成）                                       |
+| ハッシュ長   | 32 バイト                                                       |
+| 比較方法     | `CryptographicOperations.FixedTimeEquals`（timing attack 対策） |
+
+- 認証済みセッションは 8 時間有効（スライディング有効期限）
+- Cookie は `HttpOnly` / `SameSite=Strict` で保護されています
+
+### API キー認証
+
+WebAPI 経由でのアクセスには `X-Api-Key` HTTP ヘッダーによる API キー認証を使用します。
+
+| 設定項目 | 説明                               |
+| -------- | ---------------------------------- |
+| `Name`   | API キーの識別名（ログ出力に使用） |
+| `Key`    | API キーの値                       |
+
+リクエスト例：
+
+```bash
+curl -H "X-Api-Key: <APIキー>" https://localhost:5001/api/sync-definitions
+```
+
+### IP アドレス制限
+
+`IpWhitelist` セクションでクライアント IP アドレスによるアクセス制限を設定します。
+
+| 設定項目           | 型      | 説明                                         |
+| ------------------ | ------- | -------------------------------------------- |
+| `Enabled`          | `bool`  | IP 制限を有効にするか（`false` で無効）      |
+| `AllowedAddresses` | `array` | 許可する IP アドレスまたは CIDR 表記のリスト |
+
+CIDR 表記に対応しているため、サブネット単位での制限が可能です。
+
+```json
+{
+    "AllowedAddresses": ["127.0.0.1", "::1", "192.168.1.0/24", "10.0.0.0/8"]
+}
+```
+
+> **注意**: `Enabled` が `false` の場合、IP 制限は適用されません。本番環境では `true` に設定し、必要な IP アドレスのみを許可することを推奨します。

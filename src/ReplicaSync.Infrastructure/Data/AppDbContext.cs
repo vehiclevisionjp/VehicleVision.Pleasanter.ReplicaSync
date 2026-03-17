@@ -27,6 +27,9 @@ public class AppDbContext : DbContext
     /// <summary>Gets the sync log entries.</summary>
     public DbSet<SyncLogEntry> SyncLogEntries => Set<SyncLogEntry>();
 
+    /// <summary>Gets the application users.</summary>
+    public DbSet<AppUser> AppUsers => Set<AppUser>();
+
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -94,6 +97,14 @@ public class AppDbContext : DbContext
             entity.Property(e => e.TargetInstanceId).HasMaxLength(100);
             entity.Property(e => e.Status).HasConversion<string>().HasMaxLength(50);
             entity.Property(e => e.ErrorMessage).HasMaxLength(4000);
+        });
+
+        modelBuilder.Entity<AppUser>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.Username).IsUnique();
+            entity.Property(e => e.Username).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.PasswordHash).IsRequired();
         });
     }
 }

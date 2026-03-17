@@ -48,6 +48,7 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddScoped<ISyncConfigRepository, SyncConfigRepository>();
+        services.AddScoped<IAppUserRepository, AppUserRepository>();
         services.AddSingleton<IPleasanterDbAccess, PleasanterDbAccess>();
         services.AddScoped<ISyncEngine, SyncEngine>();
 

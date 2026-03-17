@@ -25,12 +25,12 @@
 
 ### テストプロジェクト構成
 
-| 項目                     | 内容                     |
-| ------------------------ | ------------------------ |
-| プロジェクト名           | `ReplicaSync.Core.Tests` |
-| テストフレームワーク     | xUnit                    |
-| ターゲットフレームワーク | .NET 10                  |
-| カバレッジツール         | coverlet.collector       |
+| 項目                     | 内容                                                                          |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| プロジェクト名           | `ReplicaSync.Core.Tests` / `ReplicaSync.Infrastructure.Tests` / `ReplicaSync.Web.Tests` |
+| テストフレームワーク     | xUnit                                                                         |
+| ターゲットフレームワーク | .NET 10                                                                       |
+| カバレッジツール         | coverlet.collector                                                            |
 
 ### ディレクトリ構造
 
@@ -49,6 +49,13 @@ ReplicaSync.Infrastructure.Tests/
 └── Pleasanter/
     └── SqlGenerators/
         └── SqlGeneratorTests.cs
+
+ReplicaSync.Web.Tests/
+├── ReplicaSync.Web.Tests.csproj
+└── Security/
+    ├── PasswordHasherTests.cs
+    ├── IpWhitelistMiddlewareTests.cs
+    └── MustChangePasswordMiddlewareTests.cs
 ```
 
 ---

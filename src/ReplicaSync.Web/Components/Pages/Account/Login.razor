@@ -1,0 +1,92 @@
+@page "/account/login"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using ReplicaSync.Core.Interfaces
+@using ReplicaSync.Web.Security
+@attribute [AllowAnonymous]
+@layout ReplicaSync.Web.Components.Layout.LoginLayout
+@inject IAppUserRepository UserRepo
+@inject NavigationManager Navigation
+@inject ILogger<Login> Logger
+
+<PageTitle>ログイン - ReplicaSync</PageTitle>
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">ReplicaSync</h3>
+                @if (!string.IsNullOrEmpty(_errorMessage))
+                {
+                    <div class="alert alert-danger">@_errorMessage</div>
+                }
+                <form method="post" @formname="LoginForm" @onsubmit="HandleLoginAsync">
+                    <AntiforgeryToken />
+                    <div class="mb-3">
+                        <label for="username" class="form-label">ユーザーID</label>
+                        <input type="text" class="form-control" id="username" name="Username" @bind="_username" required
+                               autocomplete="username" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">パスワード</label>
+                        <input type="password" class="form-control" id="password" name="Password" @bind="_password"
+                               required autocomplete="current-password" />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">ログイン</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string _username = string.Empty;
+    private string _password = string.Empty;
+    private string? _errorMessage;
+
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    private async Task HandleLoginAsync()
+    {
+        if (HttpContext is null)
+        {
+            return;
+        }
+
+        var user = await UserRepo.GetByUsernameAsync(_username);
+
+        if (user is null || !PasswordHasher.VerifyPassword(_password, user.PasswordHash))
+        {
+            Logger.LogWarning("ログイン失敗: ユーザー '{Username}'", _username);
+            _errorMessage = "ユーザーIDまたはパスワードが正しくありません。";
+            return;
+        }
+
+        var claims = new List<Claim>
+{
+new(ClaimTypes.Name, user.Username),
+new(ClaimTypes.AuthenticationMethod, "Cookie"),
+new("MustChangePassword", user.MustChangePassword.ToString()),
+};
+
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(identity);
+
+        await HttpContext.SignInAsync(
+        CookieAuthenticationDefaults.AuthenticationScheme,
+        principal);
+
+        Logger.LogInformation("ログイン成功: ユーザー '{Username}'", user.Username);
+
+        if (user.MustChangePassword)
+        {
+            Navigation.NavigateTo("account/change-password", forceLoad: true);
+        }
+        else
+        {
+            Navigation.NavigateTo("/", forceLoad: true);
+        }
+    }
+}
