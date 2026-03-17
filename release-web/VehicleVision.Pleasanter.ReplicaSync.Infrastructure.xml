@@ -323,6 +323,15 @@
         <member name="M:VehicleVision.Pleasanter.ReplicaSync.Infrastructure.Repositories.AppUserRepository.AnyUsersExistAsync(System.Threading.CancellationToken)">
             <inheritdoc />
         </member>
+        <member name="M:VehicleVision.Pleasanter.ReplicaSync.Infrastructure.Repositories.AppUserRepository.RecordFailedLoginAsync(System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:VehicleVision.Pleasanter.ReplicaSync.Infrastructure.Repositories.AppUserRepository.ResetFailedLoginCountAsync(System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:VehicleVision.Pleasanter.ReplicaSync.Infrastructure.Repositories.AppUserRepository.LockoutUserAsync(System.Int32,System.DateTime,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
         <member name="T:VehicleVision.Pleasanter.ReplicaSync.Infrastructure.Repositories.SyncConfigRepository">
             <summary>
             EF Core implementation of sync configuration repository.
